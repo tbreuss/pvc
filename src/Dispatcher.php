@@ -75,8 +75,9 @@ class Dispatcher
         $reflectionParameters = $reflectionMethod->getParameters();
         foreach ($reflectionParameters as $reflectionParameter) {
             $name = $reflectionParameter->getName();
-            if ($this->request->query->has($name)) {
-                $requestParams[$name] = $this->request->query->get($name);
+            $queryParams = $this->request->getQueryParams();
+            if (isset($queryParams[$name])) {
+                $requestParams[$name] = $queryParams[$name];
             }
         }
 
