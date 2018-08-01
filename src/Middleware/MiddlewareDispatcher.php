@@ -24,7 +24,7 @@ class MiddlewareDispatcher implements RequestHandlerInterface
     /**
      * Dispatcher constructor.
      *
-     * @param array $middlewares
+     * @param MiddlewareInterface[] $middlewares
      * @param callable $default
      */
     public function __construct(array $middlewares, callable $default)
@@ -34,8 +34,8 @@ class MiddlewareDispatcher implements RequestHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
-     * @throws \InvalidArgumentException
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

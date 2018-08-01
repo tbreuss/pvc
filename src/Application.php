@@ -9,9 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Tebe\Pvc\Middleware\MiddlewareDispatcher;
 use Tebe\Pvc\Middleware\RouterMiddleware;
-use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\HtmlResponse;
-use Zend\Diactoros\Response\TextResponse;
 use Zend\Diactoros\ServerRequestFactory;
 
 class Application
@@ -69,8 +67,7 @@ class Application
         $this->setRouter(new Router($config['controllersPath']));
         $this->setView(new View($config['viewsPath']));
         $this->setLayout(new View($config['layoutsPath']));
-        $this->middlewaresBefore = [];
-        $this->middlewaresAfter = [];
+        $this->middlewares = [];
     }
 
     /**
@@ -197,13 +194,10 @@ class Application
      */
     public function run(): void
     {
-        $middlewares = [];
-
-        if (!empty($this->middlewares)) {
-            $middlewares = array_merge($middlewares, $this->middlewares);
-        }
-
-        $middlewares[] = new RouterMiddleware($this->getRouter(), $this->getDispatcher());
+        $middlewares = array_merge(
+            $this->middlewares,
+            [new RouterMiddleware($this->getRouter(), $this->getDispatcher())]
+        );
 
         $middlewareDispatcher = new MiddlewareDispatcher($middlewares,
             function () {
@@ -217,38 +211,6 @@ class Application
         $this->emit($response);
     }
 
-    /*
-     *     public function run(): void
-    {
-        $middlewares = [];
-
-        if (!empty($this->middlewaresAfter)) {
-            $middlewares = array_merge($middlewares, array_reverse($this->middlewaresAfter));
-        }
-
-        $middlewares[] = new RouterMiddleware($this->getRouter(), $this->getDispatcher());
-
-        if (!empty($this->middlewaresBefore)) {
-            $middlewares = array_merge($middlewares, array_reverse($this->middlewaresBefore));
-        }
-
-        #print_r($middlewares);
-        #exit;
-
-        $middlewareDispatcher = new MiddlewareDispatcher($middlewares,
-            function () {
-                return new HtmlResponse('', 500);
-            }
-        );
-
-        $request = $this->getRequest();
-        $response = $middlewareDispatcher->handle($request);
-
-        $this->emit($response);
-
-    }
-     */
-
     /**
      * @param ResponseInterface $response
      */
@@ -257,6 +219,7 @@ class Application
         $statusCode = $response->getStatusCode();
 
         http_response_code($statusCode);
+
         foreach ($response->getHeaders() as $k => $values) {
             foreach ($values as $v) {
                 header(sprintf('%s: %s', $k, $v), false);

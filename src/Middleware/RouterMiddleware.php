@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tebe\Pvc\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
@@ -11,9 +13,21 @@ use Tebe\Pvc\Router;
 
 class RouterMiddleware implements MiddlewareInterface
 {
+    /**
+     * @var Router
+     */
     private $router;
+
+    /**
+     * @var Dispatcher
+     */
     private $dispatcher;
 
+    /**
+     * RouterMiddleware constructor.
+     * @param Router $router
+     * @param Dispatcher $dispatcher
+     */
     public function __construct(Router $router, Dispatcher $dispatcher)
     {
         $this->router = $router;
