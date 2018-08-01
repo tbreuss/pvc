@@ -6,11 +6,14 @@ namespace Tebe\Pvc;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Tebe\Pvc\Middleware\MiddlewareDispatcher;
+use Tebe\Pvc\Middleware\RouterMiddleware;
+use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\ServerRequestFactory;
 
 class Application
 {
-
     /**
      * @var static
      */
@@ -42,6 +45,11 @@ class Application
     private $layout;
 
     /**
+     * @var MiddlewareInterface[]
+     */
+    private $middlewares;
+
+    /**
      * Application constructor.
      * @param array $config
      */
@@ -59,6 +67,7 @@ class Application
         $this->setRouter(new Router($config['controllersPath']));
         $this->setView(new View($config['viewsPath']));
         $this->setLayout(new View($config['layoutsPath']));
+        $this->middlewares = [];
     }
 
     /**
@@ -171,14 +180,34 @@ class Application
     }
 
     /**
-     * @return void
+     * @param MiddlewareInterface $middleware
+     * @return $this
+     */
+    public function addMiddleware(MiddlewareInterface $middleware)
+    {
+        $this->middlewares[] = $middleware;
+        return $this;
+    }
+
+    /**
+     * Run
      */
     public function run(): void
     {
-        $serverParams = $this->getRequest()->getServerParams();
-        $pathInfo = $serverParams['PATH_INFO'] ?? '';
-        $route = $this->getRouter()->match($pathInfo);
-        $response = $this->getDispatcher()->dispatch($route);
+        $middlewares = array_merge(
+            $this->middlewares,
+            [new RouterMiddleware($this->getRouter(), $this->getDispatcher())]
+        );
+
+        $middlewareDispatcher = new MiddlewareDispatcher($middlewares,
+            function () {
+                return new HtmlResponse('', 200);
+            }
+        );
+
+        $request = $this->getRequest();
+        $response = $middlewareDispatcher->handle($request);
+
         $this->emit($response);
     }
 
@@ -187,11 +216,16 @@ class Application
      */
     private function emit(ResponseInterface $response)
     {
+        $statusCode = $response->getStatusCode();
+
+        http_response_code($statusCode);
+
         foreach ($response->getHeaders() as $k => $values) {
             foreach ($values as $v) {
                 header(sprintf('%s: %s', $k, $v), false);
             }
         }
+
         echo $response->getBody();
     }
 
