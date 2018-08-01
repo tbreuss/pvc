@@ -46,11 +46,7 @@ class MiddlewareDispatcher implements RequestHandlerInterface
             return call_user_func($this->default, $request);
         }
 
-        if ($middleware instanceof MiddlewareInterface) {
-
-            return $middleware->process($request, clone $this);
-        }
-
-        return $this->handle($request);
+        return $middleware->process($request, $this);
     }
+
 }

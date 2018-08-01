@@ -9,7 +9,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Tebe\Pvc\Middleware\MiddlewareDispatcher;
 use Tebe\Pvc\Middleware\RouterMiddleware;
+use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\HtmlResponse;
+use Zend\Diactoros\Response\TextResponse;
 use Zend\Diactoros\ServerRequestFactory;
 
 class Application
@@ -45,14 +47,9 @@ class Application
     private $layout;
 
     /**
-     * @var array
+     * @var MiddlewareInterface[]
      */
-    private $middlewaresBefore;
-
-    /**
-     * @var array
-     */
-    private $middlewaresAfter;
+    private $middlewares;
 
     /**
      * Application constructor.
@@ -189,19 +186,9 @@ class Application
      * @param MiddlewareInterface $middleware
      * @return $this
      */
-    public function addBeforeMiddleware(MiddlewareInterface $middleware)
+    public function addMiddleware(MiddlewareInterface $middleware)
     {
-        $this->middlewaresBefore[] = $middleware;
-        return $this;
-    }
-
-    /**
-     * @param MiddlewareInterface $middleware
-     * @return $this
-     */
-    public function addAfterMiddleware(MiddlewareInterface $middleware)
-    {
-        $this->middlewaresAfter[] = $middleware;
+        $this->middlewares[] = $middleware;
         return $this;
     }
 
@@ -209,6 +196,29 @@ class Application
      * Run
      */
     public function run(): void
+    {
+        $middlewares = [];
+
+        if (!empty($this->middlewares)) {
+            $middlewares = array_merge($middlewares, $this->middlewares);
+        }
+
+        $middlewares[] = new RouterMiddleware($this->getRouter(), $this->getDispatcher());
+
+        $middlewareDispatcher = new MiddlewareDispatcher($middlewares,
+            function () {
+                return new HtmlResponse('', 200);
+            }
+        );
+
+        $request = $this->getRequest();
+        $response = $middlewareDispatcher->handle($request);
+
+        $this->emit($response);
+    }
+
+    /*
+     *     public function run(): void
     {
         $middlewares = [];
 
@@ -222,9 +232,12 @@ class Application
             $middlewares = array_merge($middlewares, array_reverse($this->middlewaresBefore));
         }
 
+        #print_r($middlewares);
+        #exit;
+
         $middlewareDispatcher = new MiddlewareDispatcher($middlewares,
             function () {
-                return new HtmlResponse('No middleware found', 500);
+                return new HtmlResponse('', 500);
             }
         );
 
@@ -234,17 +247,22 @@ class Application
         $this->emit($response);
 
     }
+     */
 
     /**
      * @param ResponseInterface $response
      */
     private function emit(ResponseInterface $response)
     {
+        $statusCode = $response->getStatusCode();
+
+        http_response_code($statusCode);
         foreach ($response->getHeaders() as $k => $values) {
             foreach ($values as $v) {
                 header(sprintf('%s: %s', $k, $v), false);
             }
         }
+
         echo $response->getBody();
     }
 

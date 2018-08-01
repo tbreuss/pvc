@@ -40,10 +40,10 @@ class Dispatcher
 
     /**
      * @param Route $route
-     * @return ResponseInterface
+     * @return string
      * @throws \Exception
      */
-    public function dispatch(Route $route): ResponseInterface
+    public function dispatch(Route $route): string
     {
         $controllerClassName = $route->getControllerClassName();
         $actionMethod = $route->getActionMethod();
@@ -57,8 +57,7 @@ class Dispatcher
             'content' => $content
         ]);
 
-        $response = new HtmlResponse($html);
-        return $response;
+        return $html;
     }
 
     /**

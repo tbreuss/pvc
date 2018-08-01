@@ -30,12 +30,10 @@ class RouterMiddleware implements MiddlewareInterface
         $serverParams = $request->getServerParams();
         $pathInfo = $serverParams['PATH_INFO'] ?? '';
         $route = $this->router->match($pathInfo);
-        $pvcResponse = $this->dispatcher->dispatch($route);
-
+        $html = $this->dispatcher->dispatch($route);
         $response = $handler->handle($request);
-        $stream = $response->getBody();
-        $stream->write($pvcResponse->getBody());
-        return $response->withBody($stream);
+        $response->getBody()->write($html);
+        return $response;
     }
 
 }
