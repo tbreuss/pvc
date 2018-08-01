@@ -20,7 +20,6 @@
       "phpunit",
       "phpcs"
     ],
-    "run": "php -S localhost:9999 -t example/public",
     "phpunit": "php vendor/bin/phpunit",
     "phpcs": "php vendor/bin/phpcs"
   }
