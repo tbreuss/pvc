@@ -6,11 +6,14 @@ namespace Tebe\Pvc;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Tebe\Pvc\Middleware\MiddlewareDispatcher;
+use Tebe\Pvc\Middleware\RouterMiddleware;
+use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\ServerRequestFactory;
 
 class Application
 {
-
     /**
      * @var static
      */
@@ -42,6 +45,16 @@ class Application
     private $layout;
 
     /**
+     * @var array
+     */
+    private $middlewaresBefore;
+
+    /**
+     * @var array
+     */
+    private $middlewaresAfter;
+
+    /**
      * Application constructor.
      * @param array $config
      */
@@ -59,6 +72,8 @@ class Application
         $this->setRouter(new Router($config['controllersPath']));
         $this->setView(new View($config['viewsPath']));
         $this->setLayout(new View($config['layoutsPath']));
+        $this->middlewaresBefore = [];
+        $this->middlewaresAfter = [];
     }
 
     /**
@@ -171,15 +186,53 @@ class Application
     }
 
     /**
-     * @return void
+     * @param MiddlewareInterface $middleware
+     * @return $this
+     */
+    public function addBeforeMiddleware(MiddlewareInterface $middleware)
+    {
+        $this->middlewaresBefore[] = $middleware;
+        return $this;
+    }
+
+    /**
+     * @param MiddlewareInterface $middleware
+     * @return $this
+     */
+    public function addAfterMiddleware(MiddlewareInterface $middleware)
+    {
+        $this->middlewaresAfter[] = $middleware;
+        return $this;
+    }
+
+    /**
+     * Run
      */
     public function run(): void
     {
-        $serverParams = $this->getRequest()->getServerParams();
-        $pathInfo = $serverParams['PATH_INFO'] ?? '';
-        $route = $this->getRouter()->match($pathInfo);
-        $response = $this->getDispatcher()->dispatch($route);
+        $middlewares = [];
+
+        if (!empty($this->middlewaresAfter)) {
+            $middlewares = array_merge($middlewares, array_reverse($this->middlewaresAfter));
+        }
+
+        $middlewares[] = new RouterMiddleware($this->getRouter(), $this->getDispatcher());
+
+        if (!empty($this->middlewaresBefore)) {
+            $middlewares = array_merge($middlewares, array_reverse($this->middlewaresBefore));
+        }
+
+        $middlewareDispatcher = new MiddlewareDispatcher($middlewares,
+            function () {
+                return new HtmlResponse('No middleware found', 500);
+            }
+        );
+
+        $request = $this->getRequest();
+        $response = $middlewareDispatcher->handle($request);
+
         $this->emit($response);
+
     }
 
     /**
