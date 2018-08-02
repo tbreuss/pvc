@@ -44,5 +44,4 @@ class Config
         }
         return $current;
     }
-
 }

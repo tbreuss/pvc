@@ -79,7 +79,8 @@ class View
      * @param array $args
      * @return mixed
      */
-    public function __call(string $methodName, array $args) {
+    public function __call(string $methodName, array $args)
+    {
         $helper = $this->loadViewHelper($methodName);
         $value = $helper->execute($args);
         return $value;
@@ -89,7 +90,8 @@ class View
      * @param string $helper
      * @return ViewHelper
      */
-    private function loadViewHelper(string $helper) {
+    private function loadViewHelper(string $helper)
+    {
         $helperName = ucfirst($helper);
         if (!isset($this->helpers[$helper])) {
             $className = 'Tebe\\Pvc\\ViewHelper\\' . $helperName . 'ViewHelper';
@@ -99,5 +101,4 @@ class View
         }
         return $this->helpers[$helper];
     }
-
 }
