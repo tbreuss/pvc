@@ -49,5 +49,4 @@ class RouterMiddleware implements MiddlewareInterface
         $response->getBody()->write($html);
         return $response;
     }
-
 }

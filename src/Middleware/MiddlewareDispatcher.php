@@ -48,5 +48,4 @@ class MiddlewareDispatcher implements RequestHandlerInterface
 
         return $middleware->process($request, $this);
     }
-
 }

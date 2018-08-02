@@ -199,7 +199,8 @@ class Application
             [new RouterMiddleware($this->getRouter(), $this->getDispatcher())]
         );
 
-        $middlewareDispatcher = new MiddlewareDispatcher($middlewares,
+        $middlewareDispatcher = new MiddlewareDispatcher(
+            $middlewares,
             function () {
                 return new HtmlResponse('', 200);
             }
@@ -228,5 +229,4 @@ class Application
 
         echo $response->getBody();
     }
-
 }

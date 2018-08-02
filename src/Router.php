@@ -73,5 +73,4 @@ class Router
         }
         return $pathInfo;
     }
-
 }
