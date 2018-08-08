@@ -190,6 +190,18 @@ class Application
     }
 
     /**
+     * @param MiddlewareInterface[] $middlewares
+     * @return $this
+     */
+    public function setMiddleware(array $middlewares)
+    {
+        foreach ($middlewares as $middleware) {
+            $this->addMiddleware($middleware);
+        }
+        return $this;
+    }
+
+    /**
      * Run
      */
     public function run(): void
