@@ -50,6 +50,11 @@ class Application
     private $middlewares;
 
     /**
+     * @var EventDispatcher
+     */
+    private $eventDispatcher;
+
+    /**
      * Application constructor.
      * @param array $config
      */
@@ -67,6 +72,7 @@ class Application
         $this->setRouter(new Router($config['controllersPath']));
         $this->setView(new View($config['viewsPath']));
         $this->setLayout(new View($config['layoutsPath']));
+        $this->setEventDispatcher(new EventDispatcher());
         $this->middlewares = [];
     }
 
@@ -198,6 +204,33 @@ class Application
         foreach ($middlewares as $middleware) {
             $this->addMiddleware($middleware);
         }
+        return $this;
+    }
+
+    /**
+     * @param EventDispatcher $eventDispatcher
+     */
+    public function setEventDispatcher(EventDispatcher $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * @return EventDispatcher
+     */
+    public function getEventDispatcher() : EventDispatcher
+    {
+        return $this->eventDispatcher;
+    }
+
+    /**
+     * @param string $eventName
+     * @param EventHandler $eventHandler
+     * @return $this
+     */
+    public function addEventHandler(string $eventName, EventHandler $eventHandler)
+    {
+        $this->eventDispatcher->addHandler($eventName, $eventHandler);
         return $this;
     }
 
