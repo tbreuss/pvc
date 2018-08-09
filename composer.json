@@ -1,7 +1,7 @@
 {
   "name": "tebe/pvc",
   "require": {
-    "php": ">=7.1.0",
+    "php": ">=7.2.0",
     "psr/http-message": "^1.0",
     "psr/http-server-middleware": "^1.0",
     "zendframework/zend-diactoros": "^1.8"
