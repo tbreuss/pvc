@@ -1,16 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tebe\Pvc;
 
 class EventDispatcher
 {
+    /**
+     * @var EventHandler[]
+     */
     private $handlers = array();
 
+    /**
+     * EventDispatcher constructor.
+     */
     public function __construct()
     {
     }
 
-    public function addHandler($eventName, EventHandler $handler)
+    /**
+     * @param string $eventName
+     * @param EventHandler $handler
+     */
+    public function addHandler(string $eventName, EventHandler $handler) : void
     {
         if (!isset($this->handlers[$eventName])) {
             $this->handlers[$eventName] = array();
@@ -18,7 +30,13 @@ class EventDispatcher
         $this->handlers[$eventName][] = $handler;
     }
 
-    public function triggerEvent($event, $context = null, $info = null)
+    /**
+     * @param string $event
+     * @param object|null $context
+     * @param array|null $info
+     * @return Event
+     */
+    public function triggerEvent($event, object $context = null, array $info = null) : Event
     {
         if (!$event instanceof Event) {
             $event = new Event($event, $context, $info);
