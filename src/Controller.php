@@ -67,16 +67,40 @@ class Controller
      */
     protected function render(string $viewName, array $params = []): string
     {
-        $viewRoute = $viewName;
-        if (strpos($viewName, '/') === false) {
-            $viewRoute = sprintf('%s/%s', $this->route->getControllerName(), $viewName);
-        }
-
+        $viewRoute = $this->resolveViewPath($viewName);
         try {
-            return $this->view->render($viewRoute, $params);
+            $content = $this->renderPartial($viewRoute, $params);
+            $html = $this->renderPartial('layouts/default', ['content' => $content]);
+            return $html;
         } catch (\Throwable $t) {
             ob_clean();
             throw new \Exception($t->getMessage(), 0, $t);
         }
     }
+
+    /**
+     * @param string $viewName
+     * @param array $params
+     * @return string
+     */
+    protected function renderPartial(string $viewName, array $params = []): string
+    {
+        $viewRoute = $this->resolveViewPath($viewName);
+        return $this->view->render($viewRoute, $params);
+    }
+
+    /**
+     * @param string $viewName
+     * @return string
+     */
+    private function resolveViewPath(string $viewName): string
+    {
+        $viewRoute = $viewName;
+        if (strpos($viewName, '/') === false) {
+            $controllerName = $this->route->getControllerName();
+            $viewRoute = sprintf('%s/%s', $controllerName, $viewName);
+        }
+        return $viewRoute;
+    }
+
 }

@@ -40,11 +40,6 @@ class Application
     private $view;
 
     /**
-     * @var View
-     */
-    private $layout;
-
-    /**
      * @var MiddlewareInterface[]
      */
     private $middlewares;
@@ -71,7 +66,6 @@ class Application
         $this->setRequest($request);
         $this->setRouter(new Router($config['controllersPath']));
         $this->setView(new View($config['viewsPath']));
-        $this->setLayout(new View($config['layoutsPath']));
         $this->setEventDispatcher(new EventDispatcher());
         $this->middlewares = [];
     }
@@ -157,29 +151,12 @@ class Application
     }
 
     /**
-     * @param View $layout
-     */
-    private function setLayout(View $layout)
-    {
-        $this->layout = $layout;
-    }
-
-    /**
-     * @return View
-     */
-    public function getLayout()
-    {
-        return $this->layout;
-    }
-
-    /**
      * @return Dispatcher
      */
     public function getDispatcher()
     {
         $dispatcher = new Dispatcher(
             $this->getRequest(),
-            $this->getLayout(),
             $this->getView()
         );
         return $dispatcher;

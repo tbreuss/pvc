@@ -18,23 +18,16 @@ class Dispatcher
     /**
      * @var View
      */
-    private $layout;
-
-    /**
-     * @var View
-     */
     private $view;
 
     /**
      * Dispatcher constructor.
      * @param ServerRequestInterface $request
-     * @param View $layout
      * @param View $view
      */
-    public function __construct(ServerRequestInterface $request, View $layout, View $view)
+    public function __construct(ServerRequestInterface $request, View $view)
     {
         $this->setRequest($request);
-        $this->setLayout($layout);
         $this->setView($view);
     }
 
@@ -51,11 +44,7 @@ class Dispatcher
         $controller = new $controllerClassName($this->view, $route);
 
         $queryParams = $this->getHttpGetVars($controller, $actionMethod);
-        $content = call_user_func_array([$controller, $actionMethod], $queryParams);
-
-        $html = $this->layout->render('default', [
-            'content' => $content
-        ]);
+        $html = call_user_func_array([$controller, $actionMethod], $queryParams);
 
         return $html;
     }
@@ -97,22 +86,6 @@ class Dispatcher
     private function setRequest(ServerRequestInterface $request)
     {
         $this->request = $request;
-    }
-
-    /**
-     * @return View
-     */
-    public function getLayout(): View
-    {
-        return $this->layout;
-    }
-
-    /**
-     * @param View $layout
-     */
-    private function setLayout(View $layout)
-    {
-        $this->layout = $layout;
     }
 
     /**
