@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tebe\Pvc;
 
-use Tebe\Pvc\Helper\Assert;
+use Tebe\Pvc\Exception\SystemException;
 
 class Route
 {
@@ -46,20 +46,26 @@ class Route
 
     /**
      * @param string $controllerPath
+     * @throws SystemException
      */
     private function setControllerPath(string $controllerPath)
     {
-        Assert::isFile($controllerPath, "Controller path '{$controllerPath}' not found");
+        if (!is_file($controllerPath)) {
+            throw SystemException::classNotExist($controllerPath);
+        }
         require_once($controllerPath);
         $this->controllerPath = $controllerPath;
     }
 
     /**
      * @param string $controllerClass
+     * @throws SystemException
      */
     private function setControllerClass(string $controllerClass)
     {
-        Assert::classExists($controllerClass, "Controller class '{$controllerClass}' not found");
+        if (!class_exists($controllerClass, false)) {
+            throw SystemException::classNotExist($controllerClass);
+        }
         $this->controllerClass = $controllerClass;
     }
 
@@ -82,11 +88,14 @@ class Route
 
     /**
      * @return string
+     * @throws SystemException
      */
     public function getActionMethod(): string
     {
         $actionMethod = $this->getActionName() . 'Action';
-        Assert::classMethodExists($this->controllerClass, $actionMethod);
+        if (!method_exists($this->controllerClass, $actionMethod)) {
+            throw SystemException::methodNotExist($actionMethod);
+        }
         return $actionMethod;
     }
 

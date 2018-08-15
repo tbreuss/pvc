@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tebe\Pvc;
 
-use Tebe\Pvc\Helper\Assert;
+use Tebe\Pvc\Exception\SystemException;
 
 class Router
 {
@@ -51,10 +51,13 @@ class Router
 
     /**
      * @param string $controllersPath
+     * @throws SystemException
      */
     private function setControllersPath(string $controllersPath)
     {
-        Assert::isDirectory($controllersPath, 'Controllers path "%s" does not exist');
+        if (!is_dir($controllersPath)) {
+            throw SystemException::directoryNotExist($controllersPath);
+        }
         $this->controllersPath = $controllersPath;
     }
 
