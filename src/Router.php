@@ -69,7 +69,7 @@ class Router
     {
         $pathInfo = trim($pathInfo, '/');
         if (empty($pathInfo)) {
-            $pathInfo .= 'index/index';
+            $pathInfo = 'index/index';
         }
         if (strpos($pathInfo, '/') === false) {
             $pathInfo .= '/index';
