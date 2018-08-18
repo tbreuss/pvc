@@ -7,6 +7,7 @@ namespace Tebe\Pvc;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Tebe\Pvc\Exception\SystemException;
 use Tebe\Pvc\Middleware\MiddlewareDispatcher;
 use Tebe\Pvc\Middleware\RouterMiddleware;
 use Zend\Diactoros\Response\HtmlResponse;
@@ -28,11 +29,6 @@ class Application
      * @var ServerRequestInterface
      */
     private $request;
-
-    /**
-     * @var Router
-     */
-    private $router;
 
     /**
      * @var View
@@ -62,10 +58,10 @@ class Application
             $_COOKIE,
             $_FILES
         );
+        $view = new View($config['viewsPath']);
         $this->setConfig(new Config($config));
         $this->setRequest($request);
-        $this->setRouter(new Router($config['controllersPath']));
-        $this->setView(new View($config['viewsPath']));
+        $this->setView($view);
         $this->setEventDispatcher(new EventDispatcher());
         $this->middlewares = [];
     }
@@ -73,13 +69,13 @@ class Application
     /**
      * @param array|null $config
      * @return Application
-     * @throws Exception
+     * @throws SystemException
      */
     public static function instance(array $config = null)
     {
         if (is_null(static::$instance)) {
             if (is_null($config)) {
-                throw new Exception('Config array is empty');
+                throw SystemException::serverError('Config array is empty');
             }
             static::$instance = new static($config);
         }
@@ -119,22 +115,6 @@ class Application
     }
 
     /**
-     * @param Router $router
-     */
-    private function setRouter(Router $router)
-    {
-        $this->router = $router;
-    }
-
-    /**
-     * @return Router
-     */
-    public function getRouter()
-    {
-        return $this->router;
-    }
-
-    /**
      * @param View $view
      */
     private function setView(View $view)
@@ -148,18 +128,6 @@ class Application
     public function getView()
     {
         return $this->view;
-    }
-
-    /**
-     * @return Dispatcher
-     */
-    public function getDispatcher()
-    {
-        $dispatcher = new Dispatcher(
-            $this->getRequest(),
-            $this->getView()
-        );
-        return $dispatcher;
     }
 
     /**
@@ -218,7 +186,7 @@ class Application
     {
         $middlewares = array_merge(
             $this->middlewares,
-            [new RouterMiddleware($this->getRouter(), $this->getDispatcher())]
+            [new RouterMiddleware($this->getView(), $this->getConfig()->get('controllersPath'))]
         );
 
         $middlewareDispatcher = new MiddlewareDispatcher(

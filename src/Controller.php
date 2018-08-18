@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tebe\Pvc;
 
-class Controller
+abstract class Controller
 {
     /**
      * @var View
@@ -12,19 +12,26 @@ class Controller
     private $view;
 
     /**
-     * @var Route
+     * @var string
      */
-    private $route;
+    private $controllerName;
+
+    /**
+     * @var string
+     */
+    private $actionName;
 
     /**
      * Controller constructor.
      * @param View $view
-     * @param Route $route
+     * @param string $pathInfo
      */
-    public function __construct(View $view, Route $route)
+    public function __construct(View $view, string $pathInfo)
     {
+        list ($controllerName, $actionName) = explode('/', $pathInfo);
         $this->setView($view);
-        $this->setRoute($route);
+        $this->setControllerName($controllerName);
+        $this->setActionName($actionName);
     }
 
     /**
@@ -44,38 +51,16 @@ class Controller
     }
 
     /**
-     * @return Route
-     */
-    public function getRoute(): Route
-    {
-        return $this->route;
-    }
-
-    /**
-     * @param Route $route
-     */
-    private function setRoute(Route $route)
-    {
-        $this->route = $route;
-    }
-
-    /**
      * @param string $viewName
      * @param array $params
      * @return string
-     * @throws \Exception
      */
     protected function render(string $viewName, array $params = []): string
     {
         $viewRoute = $this->resolveViewPath($viewName);
-        try {
-            $content = $this->renderPartial($viewRoute, $params);
-            $html = $this->renderPartial('layouts/default', ['content' => $content]);
-            return $html;
-        } catch (\Throwable $t) {
-            ob_clean();
-            throw new \Exception($t->getMessage(), 0, $t);
-        }
+        $content = $this->renderPartial($viewRoute, $params);
+        $html = $this->renderPartial('layouts/default', ['content' => $content]);
+        return $html;
     }
 
     /**
@@ -97,10 +82,54 @@ class Controller
     {
         $viewRoute = $viewName;
         if (strpos($viewName, '/') === false) {
-            $controllerName = $this->route->getControllerName();
-            $viewRoute = sprintf('%s/%s', $controllerName, $viewName);
+            $viewRoute = sprintf('%s/%s', $this->controllerName, $viewName);
         }
         return $viewRoute;
+    }
+
+    /**
+     * @return string
+     */
+    public function getControllerName(): string
+    {
+        return $this->controllerName;
+    }
+
+    /**
+     * @param string $controllerName
+     */
+    private function setControllerName(string $controllerName)
+    {
+        $this->controllerName = $controllerName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getActionName(): string
+    {
+        return $this->actionName;
+    }
+
+    /**
+     * @param string $actionName
+     */
+    private function setActionName(string $actionName)
+    {
+        $this->actionName = $actionName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getActionMethod(): string
+    {
+        return $this->actionName . 'Action';
+    }
+
+    public function getRoute(): string
+    {
+        return $this->controllerName . '/' . $this->actionName;
     }
 
 }

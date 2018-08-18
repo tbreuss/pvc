@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tebe\Pvc\ViewHelper;
 
-use Tebe\Pvc\Helper\Url;
+use Tebe\Pvc\Helper\UrlHelper;
 use Tebe\Pvc\ViewHelper;
 
 class UrlViewHelper implements ViewHelper
@@ -14,6 +14,6 @@ class UrlViewHelper implements ViewHelper
         if (empty($args[0])) {
             return '';
         }
-        return Url::to($args[0]);
+        return UrlHelper::to($args[0]);
     }
 }

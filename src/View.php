@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tebe\Pvc;
 
-use Tebe\Pvc\Helper\Assert;
+use Tebe\Pvc\Exception\SystemException;
 
 class View
 {
@@ -31,10 +31,14 @@ class View
      * @param string $viewRoute
      * @param array $params
      * @return string
+     * @throws SystemException
      */
     public function render(string $viewRoute, array $params = []): string
     {
         $viewPath = $this->resolvePath($viewRoute);
+        if (!is_file($viewPath)) {
+            throw SystemException::fileNotExist($viewPath);
+        }
         extract($params);
         ob_start();
         require $viewPath;
@@ -53,8 +57,16 @@ class View
             $this->viewsPath,
             $viewRoute
         );
-        Assert::isFile($viewPath, "View file '%s' does not exist");
         return $viewPath;
+    }
+
+    /**
+     * @param string $viewRoute
+     * @return bool
+     */
+    public function fileExist(string $viewRoute) {
+        $viewPath = $this->resolvePath($viewRoute);
+        return is_file($viewPath);
     }
 
     /**
@@ -67,10 +79,13 @@ class View
 
     /**
      * @param string $viewsPath
+     * @throws SystemException
      */
     private function setViewsPath(string $viewsPath)
     {
-        Assert::isDirectory($viewsPath, 'Views path "%s" does not exist');
+        if (!is_dir($viewsPath)) {
+            throw SystemException::directoryNotExist($viewsPath);
+        }
         $this->viewsPath = $viewsPath;
     }
 
@@ -89,6 +104,7 @@ class View
     /**
      * @param string $helper
      * @return ViewHelper
+     * @throws SystemException
      */
     private function loadViewHelper(string $helper)
     {
@@ -96,7 +112,9 @@ class View
         if (!isset($this->helpers[$helper])) {
             $className = 'Tebe\\Pvc\\ViewHelper\\' . $helperName . 'ViewHelper';
             $fileName  = __DIR__ . "/ViewHelper/{$helperName}ViewHelper.php";
-            Assert::isFile($fileName, "View helper %s does not exist");
+            if (!is_file($fileName)) {
+                throw SystemException::fileNotExist($fileName, 'View helper "%s" does not exist');
+            }
             $this->helpers[$helper] = new $className();
         }
         return $this->helpers[$helper];
