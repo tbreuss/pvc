@@ -9,7 +9,7 @@ class EventDispatcher
     /**
      * @var EventHandler[]
      */
-    private $handlers = array();
+    private $handlers = [];
 
     /**
      * EventDispatcher constructor.
@@ -25,7 +25,7 @@ class EventDispatcher
     public function addHandler(string $eventName, EventHandler $handler) : void
     {
         if (!isset($this->handlers[$eventName])) {
-            $this->handlers[$eventName] = array();
+            $this->handlers[$eventName] = [];
         }
         $this->handlers[$eventName][] = $handler;
     }

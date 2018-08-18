@@ -131,5 +131,4 @@ abstract class Controller
     {
         return $this->controllerName . '/' . $this->actionName;
     }
-
 }

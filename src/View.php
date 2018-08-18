@@ -64,7 +64,8 @@ class View
      * @param string $viewRoute
      * @return bool
      */
-    public function fileExist(string $viewRoute) {
+    public function fileExist(string $viewRoute)
+    {
         $viewPath = $this->resolvePath($viewRoute);
         return is_file($viewPath);
     }

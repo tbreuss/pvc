@@ -54,18 +54,14 @@ class RouterMiddleware implements MiddlewareInterface
         $pathInfo = $this->getPathInfo();
 
         try {
-
             $controller = $this->resolveController($pathInfo);
             $html = $this->executeAction($controller);
-
         } catch (\Throwable $t) {
-
             // handle errors with built-in error controller
             $controller = new ErrorController($this->view, 'error/error');
             $controller->setError($t);
             $html = $this->executeAction($controller);
             $response = $response->withStatus($t->getCode());
-
         }
 
         $response->getBody()->write($html);
@@ -180,5 +176,4 @@ class RouterMiddleware implements MiddlewareInterface
         }
         $this->controllersPath = $controllersPath;
     }
-
 }
