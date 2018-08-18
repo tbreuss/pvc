@@ -75,5 +75,4 @@ class SystemException extends Exception
     {
         return new static($message, 500, $t);
     }
-
 }

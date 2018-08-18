@@ -45,5 +45,4 @@ class ErrorController extends Controller
         };
         return '';
     }
-
 }

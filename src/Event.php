@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Tebe\Pvc;
 
-class Event {
+class Event
+{
 
     /**
      * @var string
@@ -32,7 +33,8 @@ class Event {
      * @param object|null $context
      * @param array|null $info
      */
-    public function __construct(string $name, object $context = null, array $info = null) {
+    public function __construct(string $name, object $context = null, array $info = null)
+    {
         $this->name = $name;
         $this->context = $context;
         $this->info = $info;
@@ -41,35 +43,40 @@ class Event {
     /**
      * @return string
      */
-    public function getName() : string {
+    public function getName() : string
+    {
         return $this->name;
     }
 
     /**
      * @return object|null
      */
-    public function getContext() {
+    public function getContext()
+    {
         return $this->context;
     }
 
     /**
      * @return array|null
      */
-    public function getInfo() {
+    public function getInfo()
+    {
         return $this->info;
     }
 
     /**
      * @return bool
      */
-    public function isCancelled() : bool {
+    public function isCancelled() : bool
+    {
         return $this->cancelled;
     }
 
     /**
      * @return void
      */
-    public function cancel() : void {
+    public function cancel() : void
+    {
         $this->cancelled = true;
     }
 }
