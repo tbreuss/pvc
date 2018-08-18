@@ -31,10 +31,14 @@ class View
      * @param string $viewRoute
      * @param array $params
      * @return string
+     * @throws SystemException
      */
     public function render(string $viewRoute, array $params = []): string
     {
         $viewPath = $this->resolvePath($viewRoute);
+        if (!is_file($viewPath)) {
+            throw SystemException::fileNotExist($viewPath);
+        }
         extract($params);
         ob_start();
         require $viewPath;
@@ -45,7 +49,6 @@ class View
     /**
      * @param string $viewRoute
      * @return string
-     * @throws SystemException
      */
     private function resolvePath(string $viewRoute)
     {
@@ -54,10 +57,16 @@ class View
             $this->viewsPath,
             $viewRoute
         );
-        if (!is_file($viewPath)) {
-            throw SystemException::fileNotExist($viewPath);
-        }
         return $viewPath;
+    }
+
+    /**
+     * @param string $viewRoute
+     * @return bool
+     */
+    public function fileExist(string $viewRoute) {
+        $viewPath = $this->resolvePath($viewRoute);
+        return is_file($viewPath);
     }
 
     /**

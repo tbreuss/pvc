@@ -9,7 +9,7 @@ class ApplicationTest extends TestCase
 {
     public function testNothing()
     {
-        $app = new Application();
+        Application::instance(['viewsPath' => __DIR__]);
         $this->assertEquals(0, 0);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tebe\Pvc\Exception;
 
 use Exception;
+use Throwable;
 
 class SystemException extends Exception
 {
@@ -63,6 +64,16 @@ class SystemException extends Exception
     {
         $message = sprintf($format, $file);
         return new static($message, 500);
+    }
+
+    /**
+     * @param string $message
+     * @param Throwable $t
+     * @return static
+     */
+    public static function serverError(string $message, Throwable $t = null)
+    {
+        return new static($message, 500, $t);
     }
 
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tebe\Pvc\Helper;
 
 // @todo implement class properly
-class Url
+class UrlHelper
 {
     public static function to($url = '')
     {
