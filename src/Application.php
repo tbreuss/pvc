@@ -7,11 +7,10 @@ namespace Tebe\Pvc;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Tebe\HttpFactory\HttpFactory;
 use Tebe\Pvc\Exception\SystemException;
 use Tebe\Pvc\Middleware\MiddlewareDispatcher;
 use Tebe\Pvc\Middleware\RouterMiddleware;
-use Zend\Diactoros\Response\HtmlResponse;
-use Zend\Diactoros\ServerRequestFactory;
 
 class Application
 {
@@ -47,47 +46,33 @@ class Application
 
     /**
      * Application constructor.
-     * @param array $config
      */
-    private function __construct(array $config)
+    private function __construct()
     {
-        $request = ServerRequestFactory::fromGlobals(
-            $_SERVER,
-            $_GET,
-            $_POST,
-            $_COOKIE,
-            $_FILES
-        );
-        $view = new View($config['viewsPath']);
-        $this->setConfig(new Config($config));
-        $this->setRequest($request);
-        $this->setView($view);
         $this->setEventDispatcher(new EventDispatcher());
         $this->middlewares = [];
     }
 
     /**
-     * @param array|null $config
      * @return Application
      * @throws SystemException
      */
-    public static function instance(array $config = null)
+    public static function instance()
     {
         if (is_null(static::$instance)) {
-            if (is_null($config)) {
-                throw SystemException::serverError('Config array is empty');
-            }
-            static::$instance = new static($config);
+            static::$instance = new static();
         }
         return static::$instance;
     }
 
     /**
-     * @param Config $config
+     * @param array $config
+     * @return $this
      */
-    private function setConfig(Config $config)
+    public function setConfig(array $config)
     {
-        $this->config = $config;
+        $this->config = new Config($config);
+        return $this;
     }
 
     /**
@@ -100,10 +85,12 @@ class Application
 
     /**
      * @param ServerRequestInterface $request
+     * @return $this
      */
-    private function setRequest(ServerRequestInterface $request)
+    public function setRequest(ServerRequestInterface $request)
     {
         $this->request = $request;
+        return $this;
     }
 
     /**
@@ -117,7 +104,7 @@ class Application
     /**
      * @param View $view
      */
-    private function setView(View $view)
+    public function setView(View $view)
     {
         $this->view = $view;
     }
@@ -184,6 +171,10 @@ class Application
      */
     public function run(): void
     {
+        $viewsPath = $this->config->get('viewsPath');
+        $view = new View($viewsPath);
+        $this->setView($view);
+
         $middlewares = array_merge(
             $this->middlewares,
             [new RouterMiddleware($this->getView(), $this->getConfig()->get('controllersPath'))]
@@ -192,7 +183,7 @@ class Application
         $middlewareDispatcher = new MiddlewareDispatcher(
             $middlewares,
             function () {
-                return new HtmlResponse('', 200);
+                return (new HttpFactory)->createResponse(200);
             }
         );
 
