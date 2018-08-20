@@ -43,7 +43,7 @@ class Event
     /**
      * @return string
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -67,7 +67,7 @@ class Event
     /**
      * @return bool
      */
-    public function isCancelled() : bool
+    public function isCancelled(): bool
     {
         return $this->cancelled;
     }
@@ -75,7 +75,7 @@ class Event
     /**
      * @return void
      */
-    public function cancel() : void
+    public function cancel(): void
     {
         $this->cancelled = true;
     }
