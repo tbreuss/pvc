@@ -2,19 +2,27 @@
 
 namespace Tebe\Pvc;
 
+use Throwable;
+
 class ErrorController extends Controller
 {
     /**
-     * @var \Throwable
+     * @var Throwable
      */
     private $error;
 
-    public function setError($error)
+    /**
+     * @param Throwable $error
+     */
+    public function setError(Throwable $error)
     {
         $this->error = $error;
     }
 
-    public function errorAction()
+    /**
+     * @return string
+     */
+    public function errorAction(): string
     {
         // user view file
         $viewName = $this->getViewName($this->error->getCode());
@@ -33,16 +41,14 @@ class ErrorController extends Controller
      * @param int $status
      * @return string
      */
-    private function getViewName(int $status)
+    private function getViewName(int $status): string
     {
-        $viewName = 'error/' . $status;
-        if ($this->getView()->fileExist($viewName)) {
-            return $viewName;
-        };
-        $viewName = 'error/error';
-        if ($this->getView()->fileExist($viewName)) {
-            return $viewName;
-        };
+        $viewNames = ['error/' . $status, 'error/error'];
+        foreach ($viewNames as $viewName) {
+            if ($this->getView()->fileExist($viewName)) {
+                return $viewName;
+            }
+        }
         return '';
     }
 }

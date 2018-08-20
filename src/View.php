@@ -50,7 +50,7 @@ class View
      * @param string $viewRoute
      * @return string
      */
-    private function resolvePath(string $viewRoute)
+    private function resolvePath(string $viewRoute): string
     {
         $viewPath = sprintf(
             '%s/%s.php',
@@ -64,7 +64,7 @@ class View
      * @param string $viewRoute
      * @return bool
      */
-    public function fileExist(string $viewRoute)
+    public function fileExist(string $viewRoute): bool
     {
         $viewPath = $this->resolvePath($viewRoute);
         return is_file($viewPath);
@@ -107,7 +107,7 @@ class View
      * @return ViewHelper
      * @throws SystemException
      */
-    private function loadViewHelper(string $helper)
+    private function loadViewHelper(string $helper): ViewHelper
     {
         $helperName = ucfirst($helper);
         if (!isset($this->helpers[$helper])) {

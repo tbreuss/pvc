@@ -7,7 +7,7 @@ namespace Tebe\Pvc\Helper;
 // @todo implement class properly
 class UrlHelper
 {
-    public static function to($url = '')
+    public static function to($url = ''): string
     {
         if (is_array($url)) {
             return static::toRoute($url);

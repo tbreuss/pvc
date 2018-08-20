@@ -13,7 +13,7 @@ class HttpException extends Exception
      * @param string $path
      * @return static
      */
-    public static function notFound($path)
+    public static function notFound($path): HttpException
     {
         return new static(sprintf(
             'Cannot find any resource at `%s`',
@@ -28,7 +28,7 @@ class HttpException extends Exception
      *
      * @return static
      */
-    public static function methodNotAllowed($path, $method, array $allowed)
+    public static function methodNotAllowed($path, $method, array $allowed): HttpException
     {
         $error = new static(sprintf(
             'Cannot access resource `%s` using method `%s`',
@@ -46,7 +46,7 @@ class HttpException extends Exception
      *
      * @return static
      */
-    public static function badRequest($message)
+    public static function badRequest($message): HttpException
     {
         return new static(sprintf(
             'Cannot parse the request: %s',
@@ -61,10 +61,9 @@ class HttpException extends Exception
 
     /**
      * @param ResponseInterface $response
-     *
      * @return ResponseInterface
      */
-    public function withResponse(ResponseInterface $response)
+    public function withResponse(ResponseInterface $response): ResponseInterface
     {
         if (!empty($this->allowed)) {
             $response = $response->withHeader('Allow', implode(',', $this->allowed));

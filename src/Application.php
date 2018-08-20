@@ -57,7 +57,7 @@ class Application
      * @return Application
      * @throws SystemException
      */
-    public static function instance()
+    public static function instance(): Application
     {
         if (is_null(static::$instance)) {
             static::$instance = new static();
@@ -78,7 +78,7 @@ class Application
     /**
      * @return Config
      */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }
@@ -96,7 +96,7 @@ class Application
     /**
      * @return ServerRequestInterface
      */
-    public function getRequest()
+    public function getRequest(): ServerRequestInterface
     {
         return $this->request;
     }
@@ -112,7 +112,7 @@ class Application
     /**
      * @return View
      */
-    public function getView()
+    public function getView(): View
     {
         return $this->view;
     }
@@ -121,7 +121,7 @@ class Application
      * @param MiddlewareInterface $middleware
      * @return $this
      */
-    public function addMiddleware(MiddlewareInterface $middleware)
+    public function addMiddleware(MiddlewareInterface $middleware): Application
     {
         $this->middlewares[] = $middleware;
         return $this;
@@ -131,7 +131,7 @@ class Application
      * @param MiddlewareInterface[] $middlewares
      * @return $this
      */
-    public function setMiddleware(array $middlewares)
+    public function setMiddleware(array $middlewares): Application
     {
         foreach ($middlewares as $middleware) {
             $this->addMiddleware($middleware);
@@ -150,7 +150,7 @@ class Application
     /**
      * @return EventDispatcher
      */
-    public function getEventDispatcher() : EventDispatcher
+    public function getEventDispatcher(): EventDispatcher
     {
         return $this->eventDispatcher;
     }
@@ -160,7 +160,7 @@ class Application
      * @param EventHandler $eventHandler
      * @return $this
      */
-    public function addEventHandler(string $eventName, EventHandler $eventHandler)
+    public function addEventHandler(string $eventName, EventHandler $eventHandler): Application
     {
         $this->eventDispatcher->addHandler($eventName, $eventHandler);
         return $this;
@@ -196,7 +196,7 @@ class Application
     /**
      * @param ResponseInterface $response
      */
-    private function emit(ResponseInterface $response)
+    private function emit(ResponseInterface $response): void
     {
         $statusCode = $response->getStatusCode();
 
