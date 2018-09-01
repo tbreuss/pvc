@@ -11,16 +11,17 @@ class View
     /**
      * @var array
      */
-    private $helpers = [];
+    private $__helpers = [];
 
     /**
      * @var string
      */
-    private $viewsPath;
+    private $__viewsPath;
 
     /**
      * View constructor.
      * @param string $viewsPath
+     * @throws SystemException
      */
     public function __construct(string $viewsPath)
     {
@@ -33,15 +34,15 @@ class View
      * @return string
      * @throws SystemException
      */
-    public function render(string $viewRoute, array $params = []): string
+    public function render(string $__viewRoute, array $__params = []): string
     {
-        $viewPath = $this->resolvePath($viewRoute);
-        if (!is_file($viewPath)) {
-            throw SystemException::fileNotExist($viewPath);
+        $__viewPath = $this->resolvePath($__viewRoute);
+        if (!is_file($__viewPath)) {
+            throw SystemException::fileNotExist($__viewPath);
         }
-        extract($params);
+        extract($__params);
         ob_start();
-        require $viewPath;
+        require $__viewPath;
         $html = ob_get_clean();
         return $html;
     }
@@ -54,7 +55,7 @@ class View
     {
         $viewPath = sprintf(
             '%s/%s.php',
-            $this->viewsPath,
+            $this->__viewsPath,
             $viewRoute
         );
         return $viewPath;
@@ -75,7 +76,7 @@ class View
      */
     public function getViewsPath(): string
     {
-        return $this->viewsPath;
+        return $this->__viewsPath;
     }
 
     /**
@@ -87,13 +88,14 @@ class View
         if (!is_dir($viewsPath)) {
             throw SystemException::directoryNotExist($viewsPath);
         }
-        $this->viewsPath = $viewsPath;
+        $this->__viewsPath = $viewsPath;
     }
 
     /**
      * @param string $methodName
      * @param array $args
      * @return mixed
+     * @throws SystemException
      */
     public function __call(string $methodName, array $args)
     {
@@ -110,14 +112,14 @@ class View
     private function loadViewHelper(string $helper): ViewHelper
     {
         $helperName = ucfirst($helper);
-        if (!isset($this->helpers[$helper])) {
+        if (!isset($this->__helpers[$helper])) {
             $className = 'Tebe\\Pvc\\ViewHelper\\' . $helperName . 'ViewHelper';
             $fileName  = __DIR__ . "/ViewHelper/{$helperName}ViewHelper.php";
             if (!is_file($fileName)) {
                 throw SystemException::fileNotExist($fileName, 'View helper "%s" does not exist');
             }
-            $this->helpers[$helper] = new $className();
+            $this->__helpers[$helper] = new $className();
         }
-        return $this->helpers[$helper];
+        return $this->__helpers[$helper];
     }
 }
