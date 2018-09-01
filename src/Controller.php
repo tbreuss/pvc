@@ -131,4 +131,28 @@ abstract class Controller
     {
         return $this->controllerName . '/' . $this->actionName;
     }
+
+    /**
+     * @return array
+     */
+    public function httpMethods()
+    {
+        return [];
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllowedHttpMethods()
+    {
+        $actionName = $this->getActionName();
+        $httpMethods = $this->httpMethods();
+        if (empty($httpMethods[$actionName])) {
+            return ['GET'];
+        }
+        if (!empty($httpMethods[$actionName])) {
+            return array_map('strtoupper', $httpMethods[$actionName]);
+        }
+        return [];
+    }
 }

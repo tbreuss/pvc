@@ -105,6 +105,13 @@ class RouterMiddleware implements MiddlewareInterface
             throw HttpException::notFound($controller->getRoute());
         }
 
+        $httpMethod = $this->request->getMethod();
+        if (!$this->testForHttpMethod($controller, $httpMethod)) {
+            // throw not found error (404)
+            $allowedHttpMethods = $controller->getAllowedHttpMethods();
+            throw HttpException::methodNotAllowed($controller->getRoute(), $httpMethod, $allowedHttpMethods);
+        }
+
         try {
             $queryParams = $this->getHttpGetVars($controller, $actionMethod);
             $html = call_user_func_array([$controller, $actionMethod], $queryParams);
@@ -139,6 +146,23 @@ class RouterMiddleware implements MiddlewareInterface
         return $requestParams;
     }
 
+    /**
+     * @param Controller $controller
+     * @param string $httpMethod
+     * @return bool
+     */
+    private function testForHttpMethod(Controller $controller, string $httpMethod)
+    {
+        $httpMethod = strtoupper($httpMethod);
+        if ($controller->getControllerName() == 'error') {
+            return true;
+        }
+        $allowedHttpMethods = $controller->getAllowedHttpMethods();
+        if (in_array($httpMethod, $allowedHttpMethods)) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * @return string
