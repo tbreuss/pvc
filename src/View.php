@@ -11,12 +11,17 @@ class View
     /**
      * @var array
      */
-    private $__helpers = [];
+    private $__helpers;
 
     /**
      * @var string
      */
     private $__viewsPath;
+
+    /**
+     * @var array
+     */
+    private $__vars;
 
     /**
      * View constructor.
@@ -26,6 +31,8 @@ class View
     public function __construct(string $viewsPath)
     {
         $this->setViewsPath($viewsPath);
+        $this->__helpers = [];
+        $this->__vars = [];
     }
 
     /**
@@ -122,4 +129,43 @@ class View
         }
         return $this->__helpers[$helper];
     }
+
+    /**
+     * @param string $name
+     * @return mixed|null
+     */
+    public function __get(string $name)
+    {
+        if (array_key_exists($name, $this->__vars)) {
+            return $this->__vars[$name];
+        }
+        return null;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set(string $name, $value): void
+    {
+        $this->__vars[$name] = $value;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function __isset(string $name): bool
+    {
+        return isset($this->__vars[$name]);
+    }
+
+    /**
+     * @param string $name
+     */
+    public function __unset(string $name): void
+    {
+        unset($this->__vars[$name]);
+    }
+
 }
