@@ -50,6 +50,7 @@ class RequestHandler implements RequestHandlerInterface
     {
         $this->request = $request;
         $response = (new HttpFactory())->createResponse();
+        $response = $response->withHeader('Content-Type', 'text/html');
         $pathInfo = $this->getPathInfo();
 
         try {
