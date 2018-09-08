@@ -7,10 +7,9 @@ namespace Tebe\Pvc;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use Tebe\HttpFactory\HttpFactory;
 use Tebe\Pvc\Exception\SystemException;
-use Tebe\Pvc\Middleware\MiddlewareDispatcher;
-use Tebe\Pvc\Middleware\RouterMiddleware;
+use Tebe\Pvc\Middleware\MiddlewarePipe;
+use Tebe\Pvc\Middleware\RequestHandler;
 
 class Application
 {
@@ -175,20 +174,10 @@ class Application
         $view = new View($viewsPath);
         $this->setView($view);
 
-        $middlewares = array_merge(
-            $this->middlewares,
-            [new RouterMiddleware($this->getView(), $this->getConfig()->get('controllersPath'))]
-        );
-
-        $middlewareDispatcher = new MiddlewareDispatcher(
-            $middlewares,
-            function () {
-                return (new HttpFactory)->createResponse(200);
-            }
-        );
-
+        $pipe = MiddlewarePipe::create($this->middlewares);
         $request = $this->getRequest();
-        $response = $middlewareDispatcher->handle($request);
+        $requestHandler = new RequestHandler($view, $this->getConfig()->get('controllersPath'));
+        $response = $pipe->process($request, $requestHandler);
 
         $this->emit($response);
     }
