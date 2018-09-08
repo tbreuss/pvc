@@ -6,15 +6,15 @@ namespace Tebe\Pvc\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Tebe\HttpFactory\HttpFactory;
 use Tebe\Pvc\Controller;
 use Tebe\Pvc\ErrorController;
 use Tebe\Pvc\Exception\HttpException;
 use Tebe\Pvc\Exception\SystemException;
 use Tebe\Pvc\View;
 
-class RouterMiddleware implements MiddlewareInterface
+class RequestHandler implements RequestHandlerInterface
 {
     /**
      * @var View
@@ -35,6 +35,7 @@ class RouterMiddleware implements MiddlewareInterface
      * RouterMiddleware constructor.
      * @param View $view
      * @param string $controllersPath
+     * @throws SystemException
      */
     public function __construct(View $view, string $controllersPath)
     {
@@ -43,14 +44,12 @@ class RouterMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param RequestHandlerInterface $handler
-     * @return ResponseInterface
+     * Handle the request and return a response.
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $this->request = $request;
-        $response = $handler->handle($request);
+        $response = (new HttpFactory())->createResponse();
         $pathInfo = $this->getPathInfo();
 
         try {
@@ -129,6 +128,7 @@ class RouterMiddleware implements MiddlewareInterface
      * @param Controller $controller
      * @param string $methodName
      * @return array
+     * @throws \ReflectionException
      */
     private function getHttpGetVars(Controller $controller, string $methodName): array
     {
