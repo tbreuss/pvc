@@ -108,9 +108,15 @@ class Application
 
     /**
      * @return View
+     * @throws Exception\SystemException
      */
     public function getView(): View
     {
+        if (is_null($this->view)) {
+            $viewsPath = $this->config->get('viewsPath');
+            $view = new View($viewsPath);
+            $this->setView($view);
+        }
         return $this->view;
     }
 
@@ -128,7 +134,7 @@ class Application
      * @param MiddlewareInterface[] $middlewares
      * @return $this
      */
-    public function setMiddleware(array $middlewares): Application
+    public function setMiddlewares(array $middlewares): Application
     {
         foreach ($middlewares as $middleware) {
             $this->addMiddleware($middleware);
@@ -139,7 +145,7 @@ class Application
     /**
      * @param EventDispatcher $eventDispatcher
      */
-    public function setEventDispatcher(EventDispatcher $eventDispatcher)
+    private function setEventDispatcher(EventDispatcher $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
     }
@@ -168,15 +174,10 @@ class Application
      */
     public function run(): void
     {
-        $viewsPath = $this->config->get('viewsPath');
-        $view = new View($viewsPath);
-        $this->setView($view);
-
-        $pipe = MiddlewarePipe::create($this->middlewares);
         $request = $this->getRequest();
-        $requestHandler = new RequestHandler($view, $this->getConfig()->get('controllersPath'));
-        $response = $pipe->process($request, $requestHandler);
-
+        $requestHandler = $this->getRequestHandler();
+        $middlewarePipe = $this->getMiddlewarePipe();
+        $response = $middlewarePipe->process($request, $requestHandler);
         $this->emit($response);
     }
 
@@ -197,4 +198,26 @@ class Application
 
         echo $response->getBody();
     }
+
+    /**
+     * @return RequestHandler
+     * @throws Exception\SystemException
+     */
+    private function getRequestHandler(): RequestHandler
+    {
+        $view = $this->getView();
+        $controllersPath = $this->getConfig()->get('controllersPath');
+        $requestHandler = new RequestHandler($view, $controllersPath);
+        return $requestHandler;
+    }
+
+    /**
+     * @return MiddlewarePipe
+     */
+    private function getMiddlewarePipe(): MiddlewarePipe
+    {
+        $middlewarePipe = MiddlewarePipe::create($this->middlewares);
+        return $middlewarePipe;
+    }
+
 }
