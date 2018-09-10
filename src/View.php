@@ -36,8 +36,8 @@ class View
     }
 
     /**
-     * @param string $viewRoute
-     * @param array $params
+     * @param string $__viewRoute
+     * @param array $__params
      * @return string
      * @throws SystemException
      */

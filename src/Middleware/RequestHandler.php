@@ -45,6 +45,10 @@ class RequestHandler implements RequestHandlerInterface
 
     /**
      * Handle the request and return a response.
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws HttpException
+     * @throws SystemException
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

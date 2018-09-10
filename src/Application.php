@@ -7,7 +7,6 @@ namespace Tebe\Pvc;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use Tebe\Pvc\Exception\SystemException;
 use Tebe\Pvc\Middleware\MiddlewarePipe;
 use Tebe\Pvc\Middleware\RequestHandler;
 
@@ -54,7 +53,6 @@ class Application
 
     /**
      * @return Application
-     * @throws SystemException
      */
     public static function instance(): Application
     {

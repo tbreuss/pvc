@@ -54,6 +54,7 @@ abstract class Controller
      * @param string $viewName
      * @param array $params
      * @return string
+     * @throws Exception\SystemException
      */
     protected function render(string $viewName, array $params = []): string
     {
@@ -67,6 +68,7 @@ abstract class Controller
      * @param string $viewName
      * @param array $params
      * @return string
+     * @throws Exception\SystemException
      */
     protected function renderPartial(string $viewName, array $params = []): string
     {

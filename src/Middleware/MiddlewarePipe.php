@@ -10,7 +10,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class MiddlewarePipe implements MiddlewareInterface
 {
     /**
-     * @var ServerMiddlewareInterface[]
+     * @var MiddlewareInterface[]
      */
     private $middlewares = [];
 
