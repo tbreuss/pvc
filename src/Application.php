@@ -219,5 +219,4 @@ class Application
         $middlewarePipe = MiddlewarePipe::create($this->middlewares);
         return $middlewarePipe;
     }
-
 }
