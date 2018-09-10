@@ -46,6 +46,7 @@ class EventDispatcher
             return $event;
         }
         foreach ($this->handlers[$eventName] as $handler) {
+            /* @var EventHandler $handler */
             $handler->handle($event);
             if ($event->isCancelled()) {
                 break;

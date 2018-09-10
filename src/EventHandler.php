@@ -6,5 +6,8 @@ namespace Tebe\Pvc;
 
 interface EventHandler
 {
+    /**
+     * @param Event $event
+     */
     public function handle(Event $event): void;
 }

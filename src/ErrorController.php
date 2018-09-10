@@ -21,6 +21,7 @@ class ErrorController extends Controller
 
     /**
      * @return string
+     * @throws Exception\SystemException
      */
     public function errorAction(): string
     {
