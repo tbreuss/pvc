@@ -167,5 +167,4 @@ class View
     {
         unset($this->__vars[$name]);
     }
-
 }
