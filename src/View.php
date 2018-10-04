@@ -8,6 +8,8 @@ use Tebe\Pvc\Exception\SystemException;
 
 class View
 {
+    // phpcs:disable
+
     /**
      * @var array
      */
@@ -22,6 +24,8 @@ class View
      * @var array
      */
     private $__vars;
+
+    // phpcs:enable
 
     /**
      * View constructor.
