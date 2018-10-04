@@ -1,5 +1,6 @@
 {
   "name": "tebe/pvc",
+  "description": "PVC - A minimal P[HP] [M]VC framework",
   "license": "MIT",
   "require": {
     "php": ">=7.2.0",
@@ -23,7 +24,7 @@
       "phpunit",
       "phpcs"
     ],
-    "phpunit": "php vendor/bin/phpunit",
-    "phpcs": "php vendor/bin/phpcs"
+    "phpunit": "./vendor/bin/phpunit",
+    "phpcs": "./vendor/bin/phpcs"
   }
 }
