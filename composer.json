@@ -1,18 +1,26 @@
 {
   "name": "tebe/pvc",
   "description": "PVC - A minimal P[HP] [M]VC framework",
+  "type": "library",
   "license": "MIT",
+  "authors": [
+    {
+      "name": "Thomas Breuss",
+      "email": "me@tebe.ch"
+    }
+  ],
   "require": {
-    "php": ">=7.2.0",
+    "php": ">=7.2",
     "ext-json": "*",
     "psr/http-message": "^1.0",
     "psr/http-server-middleware": "^1.0",
     "tebe/http-factory": "@dev"
   },
   "require-dev": {
-    "zendframework/zend-diactoros": "^1.8",
-    "phpunit/phpunit": "^6.4",
-    "squizlabs/php_codesniffer": "^3.1"
+    "phpmd/phpmd": "^2.6",
+    "phpunit/phpunit": "^6.5",
+    "squizlabs/php_codesniffer": "^3.3",
+    "zendframework/zend-diactoros": "^1.8"
   },
   "autoload": {
     "psr-4": {
@@ -22,9 +30,12 @@
   "scripts": {
     "test": [
       "@phpunit",
+      "@phpmd",
       "@phpcs"
     ],
+    "phpmd": "./vendor/bin/phpmd ./src text codesize,design,naming,unusedcode",
     "phpunit": "./vendor/bin/phpunit",
+    "phpcbf": "./vendor/bin/phpcbf",
     "phpcs": "./vendor/bin/phpcs"
   }
 }
