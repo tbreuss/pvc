@@ -29,13 +29,13 @@
   },
   "scripts": {
     "test": [
-      "@phpunit",
+      "@phpcs",
       "@phpmd",
-      "@phpcs"
+      "@phpunit"
     ],
-    "phpmd": "./vendor/bin/phpmd ./src text codesize,design,naming,unusedcode",
-    "phpunit": "./vendor/bin/phpunit",
     "phpcbf": "./vendor/bin/phpcbf",
-    "phpcs": "./vendor/bin/phpcs"
+    "phpcs": "./vendor/bin/phpcs",
+    "phpmd": "./vendor/bin/phpmd ./src text codesize,design,naming,unusedcode",
+    "phpunit": "./vendor/bin/phpunit"
   }
 }
