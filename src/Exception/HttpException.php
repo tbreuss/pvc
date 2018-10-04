@@ -4,60 +4,60 @@ declare(strict_types=1);
 
 namespace Tebe\Pvc\Exception;
 
-use Psr\Http\Message\ResponseInterface;
 use Exception;
 
 class HttpException extends Exception
 {
     /**
+     * @var array
+     */
+    private $allowed = [];
+
+    /**
      * @param string $path
+     * @param string|null $format
      * @return static
      */
-    public static function notFound($path): HttpException
+    public static function notFound(string $path, string $format = null): HttpException
     {
-        return new static(sprintf(
-            'Cannot find any resource at `%s`',
-            $path
-        ), 404);
+        $format = $format ?? 'Cannot find any resource at `%s`';
+        $message = sprintf($format, $path);
+        return new static($message, 404);
     }
 
     /**
      * @param string $path
      * @param string $method
      * @param array $allowed
-     *
+     * @param string|null $format
      * @return static
      */
-    public static function methodNotAllowed($path, $method, array $allowed): HttpException
-    {
-        $error = new static(sprintf(
-            'Cannot access resource `%s` using method `%s`',
-            $path,
-            $method
-        ), 405);
-
+    public static function methodNotAllowed(
+        string $path,
+        string $method,
+        array $allowed,
+        string $format = null
+    ): HttpException {
+        $format = $format ?? 'Cannot access resource `%s` using method `%s`';
+        $message = sprintf($format, $path, $method);
+        $error = new static($message, 405);
         $error->allowed = $allowed;
-
         return $error;
     }
 
     /**
-     * @param string $message
-     *
+     * @param string $path
+     * @param string|null $format
      * @return static
      */
-    public static function badRequest($message): HttpException
+    public static function badRequest(string $path, string $format = null): HttpException
     {
+        $format = $format ?? 'Cannot parse the request: %s';
         return new static(sprintf(
-            'Cannot parse the request: %s',
-            $message
+            $format,
+            $path
         ), 400);
     }
-
-    /**
-     * @var array
-     */
-    private $allowed = [];
 
     /**
      * @param ResponseInterface $response
