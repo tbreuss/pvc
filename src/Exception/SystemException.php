@@ -15,8 +15,9 @@ class SystemException extends Exception
      * @param string $format
      * @return static
      */
-    public static function classNotExist(string $class, string $format = 'Class "%s" does not exist'): SystemException
+    public static function classNotExist(string $class, string $format = null): SystemException
     {
+        $format = $format ?? 'Class "%s" does not exist';
         $message = sprintf($format, $class);
         return new static($message, 500);
     }
@@ -26,8 +27,9 @@ class SystemException extends Exception
      * @param string $format
      * @return static
      */
-    public static function methodNotExist(string $method, string $format = 'Method "%s" does not exist'): SystemException
+    public static function methodNotExist(string $method, string $format = null): SystemException
     {
+        $format = $format ?? 'Method "%s" does not exist';
         $message = sprintf($format, $method);
         return new static($message, 500);
     }
@@ -37,8 +39,9 @@ class SystemException extends Exception
      * @param string $format
      * @return static
      */
-    public static function includeFileNotExist(string $filepath, string $format = 'Include file "%s" does not exist'): SystemException
+    public static function includeFileNotExist(string $filepath, string $format = null): SystemException
     {
+        $format = $format ?? 'Include file "%s" does not exist';
         $message = sprintf($format, $filepath);
         return new static($message, 500);
     }
@@ -48,8 +51,9 @@ class SystemException extends Exception
      * @param string $format
      * @return static
      */
-    public static function directoryNotExist(string $directory, string $format = 'Directory "%s" does not exist'): SystemException
+    public static function directoryNotExist(string $directory, string $format = null): SystemException
     {
+        $format = $format ?? 'Directory "%s" does not exist';
         $message = sprintf($format, $directory);
         return new static($message, 500);
     }
@@ -59,8 +63,9 @@ class SystemException extends Exception
      * @param string $format
      * @return static
      */
-    public static function fileNotExist(string $file, string $format = 'File "%s" does not exist'): SystemException
+    public static function fileNotExist(string $file, string $format = null): SystemException
     {
+        $format = $format ?? 'File "%s" does not exist';
         $message = sprintf($format, $file);
         return new static($message, 500);
     }
