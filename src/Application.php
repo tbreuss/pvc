@@ -170,7 +170,7 @@ class Application
     }
 
     /**
-     * Run
+     * @throws Exception\SystemException
      */
     public function run(): void
     {
