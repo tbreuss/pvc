@@ -79,7 +79,7 @@ class RequestHandler implements RequestHandlerInterface
      */
     private function resolveController(string $pathInfo): Controller
     {
-        list($controllerName) = explode('/', $pathInfo);
+        [$controllerName] = explode('/', $pathInfo);
 
         $controllerPath = sprintf('%s/%sController.php', $this->controllersPath, ucfirst($controllerName));
 
