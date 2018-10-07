@@ -28,7 +28,7 @@ abstract class Controller
      */
     public function __construct(View $view, string $pathInfo)
     {
-        list ($controllerName, $actionName) = explode('/', $pathInfo);
+        [$controllerName, $actionName] = explode('/', $pathInfo);
         $this->setView($view);
         $this->setControllerName($controllerName);
         $this->setActionName($actionName);
