@@ -8,11 +8,11 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Tebe\HttpFactory\HttpFactory;
-use Tebe\Pvc\Controller;
-use Tebe\Pvc\ErrorController;
+use Tebe\Pvc\Controller\BaseController;
+use Tebe\Pvc\Controller\ErrorController;
 use Tebe\Pvc\Exception\HttpException;
 use Tebe\Pvc\Exception\SystemException;
-use Tebe\Pvc\View;
+use Tebe\Pvc\View\View;
 
 class RequestHandler implements RequestHandlerInterface
 {
@@ -59,25 +59,33 @@ class RequestHandler implements RequestHandlerInterface
 
         try {
             $controller = $this->resolveController($pathInfo);
-            $html = $this->executeAction($controller);
+            $mixed = $this->executeAction($controller);
         } catch (\Throwable $t) {
             // handle errors with built-in error controller
             $controller = new ErrorController($this->view, 'error/error');
             $controller->setError($t);
-            $html = $this->executeAction($controller);
+            $mixed = $this->executeAction($controller);
             $response = $response->withStatus($t->getCode());
         }
 
-        $response->getBody()->write($html);
+        if (is_array($mixed)) {
+            $response = $response->withHeader('Content-Type', 'application/json');
+            $response->getBody()->write(json_encode($mixed));
+        } elseif (is_string($mixed)) {
+            $response->getBody()->write($mixed);
+        } else {
+            throw new \Exception('Unsupported content type');
+        }
+
         return $response;
     }
 
     /**
      * @param string $pathInfo
-     * @return Controller
+     * @return BaseController
      * @throws HttpException
      */
-    private function resolveController(string $pathInfo): Controller
+    private function resolveController(string $pathInfo): BaseController
     {
         [$controllerName] = explode('/', $pathInfo);
 
@@ -95,12 +103,12 @@ class RequestHandler implements RequestHandlerInterface
     }
 
     /**
-     * @param Controller $controller
-     * @return string
+     * @param BaseController $controller
+     * @return mixed
      * @throws HttpException
      * @throws SystemException
      */
-    private function executeAction(Controller $controller): string
+    private function executeAction(BaseController $controller)
     {
         $actionMethod = $controller->getActionMethod();
 
@@ -130,12 +138,12 @@ class RequestHandler implements RequestHandlerInterface
     /**
      * Get the HTTP GET vars which are requested by the method using method parameters (a kind of injecting the get
      * vars into the action method name).
-     * @param Controller $controller
+     * @param BaseController $controller
      * @param string $methodName
      * @return array
      * @throws \ReflectionException
      */
-    private function getHttpGetVars(Controller $controller, string $methodName): array
+    private function getHttpGetVars(BaseController $controller, string $methodName): array
     {
         $requestParams = [];
         $reflectionMethod = new \ReflectionMethod($controller, $methodName);
@@ -152,11 +160,11 @@ class RequestHandler implements RequestHandlerInterface
     }
 
     /**
-     * @param Controller $controller
+     * @param BaseController $controller
      * @param string $httpMethod
      * @return bool
      */
-    private function testForHttpMethod(Controller $controller, string $httpMethod)
+    private function testForHttpMethod(BaseController $controller, string $httpMethod)
     {
         $httpMethod = strtoupper($httpMethod);
         if ($controller->getControllerName() == 'error') {

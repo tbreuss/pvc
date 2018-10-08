@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tebe\Pvc;
+namespace Tebe\Pvc\View;
 
 use Tebe\Pvc\Exception\SystemException;
 
@@ -11,9 +11,9 @@ class View
     // phpcs:disable
 
     /**
-     * @var array
+     * @var ViewHelpers
      */
-    private $__helpers;
+    private $helpers;
 
     /**
      * @var string
@@ -30,12 +30,13 @@ class View
     /**
      * View constructor.
      * @param string $viewsPath
+     * @param ViewHelpers $helpers
      * @throws SystemException
      */
-    public function __construct(string $viewsPath)
+    public function __construct(string $viewsPath, ViewHelpers $helpers)
     {
         $this->setViewsPath($viewsPath);
-        $this->__helpers = [];
+        $this->helpers = $helpers;
         $this->__vars = [];
     }
 
@@ -103,35 +104,67 @@ class View
     }
 
     /**
-     * @param string $methodName
+     * @param string $name
      * @param array $args
      * @return mixed
-     * @throws SystemException
      */
-    public function __call(string $methodName, array $args)
+    public function __call(string $name, array $args)
     {
-        $helper = $this->loadViewHelper($methodName);
-        $value = $helper->execute($args);
-        return $value;
+        $callable = $this->helpers->get($name);
+        return $callable(...$args);
     }
 
     /**
-     * @param string $helper
-     * @return ViewHelper
-     * @throws SystemException
+     * Register a new template function.
+     * @param  string   $name;
+     * @param  callback $callback;
+     * @return $this
      */
-    private function loadViewHelper(string $helper): ViewHelper
+    public function registerHelper($name, $callback)
     {
-        $helperName = ucfirst($helper);
-        if (!isset($this->__helpers[$helper])) {
-            $className = 'Tebe\\Pvc\\ViewHelper\\' . $helperName . 'ViewHelper';
-            $fileName  = __DIR__ . "/ViewHelper/{$helperName}ViewHelper.php";
-            if (!is_file($fileName)) {
-                throw SystemException::fileNotExist($fileName, 'View helper "%s" does not exist');
-            }
-            $this->__helpers[$helper] = new $className();
-        }
-        return $this->__helpers[$helper];
+        $this->helpers->add($name, $callback);
+        return $this;
+    }
+
+    /**
+     * Remove a template function.
+     * @param  string $name;
+     * @return $this
+     */
+    public function removeHelper($name)
+    {
+        $this->helpers->remove($name);
+        return $this;
+    }
+
+    /**
+     * Get a template function.
+     * @param  string $name
+     * @return callable
+     */
+    public function getHelper($name)
+    {
+        return $this->helpers->get($name);
+    }
+
+    /**
+     * Check if a template function exists.
+     * @param  string  $name
+     * @return boolean
+     */
+    public function doesHelperExist($name)
+    {
+        return $this->helpers->exists($name);
+    }
+
+    /**
+     * @param ViewExtension $extension
+     * @return $this
+     */
+    public function registerExtension(ViewExtension $extension)
+    {
+        $extension->register($this);
+        return $this;
     }
 
     /**

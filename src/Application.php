@@ -7,8 +7,14 @@ namespace Tebe\Pvc;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Tebe\Pvc\Event\EventDispatcher;
+use Tebe\Pvc\Event\EventHandler;
+use Tebe\Pvc\Helper\UrlHelper;
 use Tebe\Pvc\Middleware\MiddlewarePipe;
 use Tebe\Pvc\Middleware\RequestHandler;
+use Tebe\Pvc\View\ViewExtension;
+use Tebe\Pvc\View\ViewHelpers;
+use Tebe\Pvc\View\View;
 
 class Application
 {
@@ -31,6 +37,11 @@ class Application
      * @var View
      */
     private $view;
+
+    /**
+     * @var array
+     */
+    private $viewExtensions;
 
     /**
      * @var MiddlewareInterface[]
@@ -114,7 +125,20 @@ class Application
     {
         if (is_null($this->view)) {
             $viewsPath = $this->config->get('viewsPath');
-            $view = new View($viewsPath);
+            $helpers = new ViewHelpers();
+            $view = new View($viewsPath, $helpers);
+
+            $view->registerHelper('escape', function (string $string) {
+                return htmlspecialchars($string);
+            });
+            $view->registerHelper('url', function ($args) {
+                return UrlHelper::to($args);
+            });
+
+            foreach ($this->viewExtensions as $viewExtension) {
+                $view->registerExtension($viewExtension);
+            }
+
             $this->setView($view);
         }
         return $this->view;
@@ -218,5 +242,15 @@ class Application
     {
         $middlewarePipe = MiddlewarePipe::create($this->middlewares);
         return $middlewarePipe;
+    }
+
+    /**
+     * @param ViewExtension[] $viewExtensions
+     * @return Application
+     */
+    public function setViewExtensions(array $viewExtensions)
+    {
+        $this->viewExtensions = $viewExtensions;
+        return $this;
     }
 }
