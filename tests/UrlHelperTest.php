@@ -19,13 +19,14 @@ class UrlHelperTest extends TestCase
     public function testTo()
     {
         $tests = ['/', 'http://example.com', 'https://example.com'];
-
         foreach ($tests as $test) {
             $url = UrlHelper::to($test);
             $this->assertEquals($url, $test);
         }
+    }
 
-        // testing wrong type
+    public function testToInvalidArgumentException()
+    {
         $this->expectException(InvalidArgumentException::class);
         UrlHelper::to(0.4521);
     }
@@ -54,12 +55,16 @@ class UrlHelperTest extends TestCase
             $url = UrlHelper::toRoute($test[0]);
             $this->assertEquals($url, $test[1]);
         }
+    }
 
-        // testing type error
+    public function testToRouteTypeError()
+    {
         $this->expectException(TypeError::class);
         UrlHelper::toRoute('index/index');
+    }
 
-        // testing invalid argument
+    public function testToRouteInvalidArgumentException()
+    {
         $this->expectException(InvalidArgumentException::class);
         UrlHelper::toRoute([]);
     }
