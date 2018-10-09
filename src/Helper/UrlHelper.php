@@ -4,19 +4,39 @@ declare(strict_types=1);
 
 namespace Tebe\Pvc\Helper;
 
+use InvalidArgumentException;
+
 // @todo implement class properly
+
 class UrlHelper
 {
+    /**
+     * @param mixed $url
+     * @return string
+     * @throws InvalidArgumentException
+     */
     public static function to($url = ''): string
     {
         if (is_array($url)) {
             return static::toRoute($url);
         }
-        return $url;
+        if (is_string($url)) {
+            return $url;
+        }
+        throw new InvalidArgumentException('Only array or string allowed');
     }
 
+    /**
+     * @param array $route
+     * @return string
+     * @throws InvalidArgumentException
+     */
     public static function toRoute(array $route): string
     {
+        if (empty($route)) {
+            throw new InvalidArgumentException('The given route is empty');
+        }
+
         $urlParts = [$_SERVER['SCRIPT_NAME']];
 
         $r = trim(array_shift($route), '/');

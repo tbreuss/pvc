@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tebe\Pvc;
+namespace Tebe\Pvc\Event;
 
 interface EventHandler
 {

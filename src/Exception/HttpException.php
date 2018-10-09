@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tebe\Pvc\Exception;
 
 use Exception;
+use Psr\Http\Message\ResponseInterface;
 
 class HttpException extends Exception
 {

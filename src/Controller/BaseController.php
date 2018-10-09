@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tebe\Pvc;
+namespace Tebe\Pvc\Controller;
 
-abstract class Controller
+use Tebe\Pvc\Exception\SystemException;
+use Tebe\Pvc\View\View;
+
+abstract class BaseController
 {
     /**
      * @var View
@@ -28,7 +31,7 @@ abstract class Controller
      */
     public function __construct(View $view, string $pathInfo)
     {
-        list ($controllerName, $actionName) = explode('/', $pathInfo);
+        [$controllerName, $actionName] = explode('/', $pathInfo);
         $this->setView($view);
         $this->setControllerName($controllerName);
         $this->setActionName($actionName);
@@ -54,7 +57,7 @@ abstract class Controller
      * @param string $viewName
      * @param array $params
      * @return string
-     * @throws Exception\SystemException
+     * @throws SystemException
      */
     protected function render(string $viewName, array $params = []): string
     {
@@ -68,7 +71,7 @@ abstract class Controller
      * @param string $viewName
      * @param array $params
      * @return string
-     * @throws Exception\SystemException
+     * @throws SystemException
      */
     protected function renderPartial(string $viewName, array $params = []): string
     {
