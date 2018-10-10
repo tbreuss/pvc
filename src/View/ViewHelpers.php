@@ -13,7 +13,7 @@ class ViewHelpers
 {
     /**
      * Array of template functions.
-     * @var array
+     * @var callable[]
      */
     private $helpers = [];
 
@@ -23,7 +23,7 @@ class ViewHelpers
      * @param  callback $callback
      * @return ViewHelpers
      */
-    public function add($name, callable $callback)
+    public function add(string $name, callable $callback): self
     {
         if ($this->exists($name)) {
             throw new LogicException(
@@ -41,7 +41,7 @@ class ViewHelpers
      * @param  string $name
      * @return ViewHelpers
      */
-    public function remove($name)
+    public function remove(string $name): self
     {
         if (!$this->exists($name)) {
             throw new LogicException(
@@ -59,7 +59,7 @@ class ViewHelpers
      * @param  string $name
      * @return callable
      */
-    public function get($name)
+    public function get(string $name): callable
     {
         if (!$this->exists($name)) {
             throw new LogicException('The template function "' . $name . '" was not found.');
@@ -73,7 +73,7 @@ class ViewHelpers
      * @param  string $name
      * @return boolean
      */
-    public function exists($name)
+    public function exists(string $name): bool
     {
         return isset($this->helpers[$name]);
     }

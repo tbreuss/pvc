@@ -120,7 +120,7 @@ class View
      * @param  callback $callback;
      * @return $this
      */
-    public function registerHelper($name, $callback)
+    public function registerHelper(string $name, callable $callback): self
     {
         $this->helpers->add($name, $callback);
         return $this;
@@ -131,7 +131,7 @@ class View
      * @param  string $name;
      * @return $this
      */
-    public function removeHelper($name)
+    public function removeHelper(string $name): self
     {
         $this->helpers->remove($name);
         return $this;
@@ -142,7 +142,7 @@ class View
      * @param  string $name
      * @return callable
      */
-    public function getHelper($name)
+    public function getHelper(string $name): callable
     {
         return $this->helpers->get($name);
     }
@@ -152,7 +152,7 @@ class View
      * @param  string  $name
      * @return boolean
      */
-    public function doesHelperExist($name)
+    public function doesHelperExist(string $name): bool
     {
         return $this->helpers->exists($name);
     }
@@ -161,7 +161,7 @@ class View
      * @param ViewExtension $extension
      * @return $this
      */
-    public function registerExtension(ViewExtension $extension)
+    public function registerExtension(ViewExtension $extension): self
     {
         $extension->register($this);
         return $this;
