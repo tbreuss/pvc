@@ -36,7 +36,7 @@ class EventDispatcher
      * @param array|null $info
      * @return Event
      */
-    public function triggerEvent($event, object $context = null, array $info = null): Event
+    public function triggerEvent(string $event, object $context = null, array $info = null): Event
     {
         if (!$event instanceof Event) {
             $event = new Event($event, $context, $info);
