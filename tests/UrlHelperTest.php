@@ -18,14 +18,12 @@ class UrlHelperTest extends TestCase
 
     public function testTo()
     {
-        $tests = ['/', 'http://example.com', 'https://example.com'];
-        foreach ($tests as $test) {
-            $url = UrlHelper::to($test);
-            $this->assertEquals($url, $test);
-        }
+        $this->assertEquals('/', UrlHelper::to('/'));
+        $this->assertEquals('http://example.com', UrlHelper::to('http://example.com'));
+        $this->assertEquals('https://example.com', UrlHelper::to('https://example.com'));
     }
 
-    public function testToInvalidArgumentException()
+    public function testToWithWrongType()
     {
         $this->expectException(InvalidArgumentException::class);
         UrlHelper::to(0.4521);
@@ -33,37 +31,29 @@ class UrlHelperTest extends TestCase
 
     public function testToRoute()
     {
-        $tests = [
-            [['/'], $this->scriptName],
-            [['index'], $this->scriptName . '/index'],
-            [['/index'], $this->scriptName . '/index'],
-            [['///index'], $this->scriptName . '/index'],
-            [['index/'], $this->scriptName . '/index'],
-            [['index///'], $this->scriptName . '/index'],
-            [['index/index'], $this->scriptName . '/index/index'],
-            [['index/features'], $this->scriptName . '/index/features'],
-            [['news/list'], $this->scriptName . '/news/list'],
-            [['news/detail', 'id' => 23], $this->scriptName . '/news/detail?id=23'],
-            [
-                ['index/contact', 'a' => 1, 'b' => 2, '#' => 'anchor'],
-                $this->scriptName . '/index/contact?a=1&b=2#anchor'
-            ],
-        ];
-
-        // testing different routes
-        foreach ($tests as $test) {
-            $url = UrlHelper::toRoute($test[0]);
-            $this->assertEquals($url, $test[1]);
-        }
+        $this->assertEquals($this->scriptName, UrlHelper::toRoute(['/']));
+        $this->assertEquals($this->scriptName . '/index', UrlHelper::toRoute(['index']));
+        $this->assertEquals($this->scriptName . '/index', UrlHelper::toRoute(['/index']));
+        $this->assertEquals($this->scriptName . '/index', UrlHelper::toRoute(['//index']));
+        $this->assertEquals($this->scriptName . '/index', UrlHelper::toRoute(['index/']));
+        $this->assertEquals($this->scriptName . '/index', UrlHelper::toRoute(['index//']));
+        $this->assertEquals($this->scriptName . '/index/index', UrlHelper::toRoute(['index/index']));
+        $this->assertEquals($this->scriptName . '/index/features', UrlHelper::toRoute(['index/features']));
+        $this->assertEquals($this->scriptName . '/news/list', UrlHelper::toRoute(['news/list']));
+        $this->assertEquals($this->scriptName . '/news/detail?id=23', UrlHelper::toRoute(['news/detail', 'id' => 23]));
+        $this->assertEquals(
+            $this->scriptName . '/index/contact?a=1&b=2#anchor',
+            UrlHelper::toRoute(['index/contact', 'a' => 1, 'b' => 2, '#' => 'anchor'])
+        );
     }
 
-    public function testToRouteTypeError()
+    public function testToRouteWithWrongType()
     {
         $this->expectException(TypeError::class);
         UrlHelper::toRoute('index/index');
     }
 
-    public function testToRouteInvalidArgumentException()
+    public function testToRouteWithEmptyArray()
     {
         $this->expectException(InvalidArgumentException::class);
         UrlHelper::toRoute([]);

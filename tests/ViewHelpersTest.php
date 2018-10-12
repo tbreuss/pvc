@@ -10,86 +10,75 @@ use TypeError;
 
 class ViewHelpersTest extends TestCase
 {
+    private $helpers;
+
+    public function setUp()
+    {
+        $this->helpers = new ViewHelpers();
+    }
+
     public function testAdd()
     {
-        $helpers = new ViewHelpers();
+        $this->assertInstanceOf(ViewHelpers::class, $this->helpers->add('name', 'strtoupper'));
+    }
 
-        // return value
-        $foo = function () {
-            return;
-        };
-        $bar = function () {
-            return;
-        };
-
-        $return = $helpers->add('foo', $foo);
-        $this->assertInstanceOf(ViewHelpers::class, $return);
-
-        $helpers->add('bar', $bar);
-        $boolToTest = $helpers->exists('bar');
-        $this->assertEquals(true, $boolToTest);
-
-        $funcToTest = $helpers->get('foo');
-        $this->assertEquals($foo, $funcToTest);
-
-        // key exists
+    public function testAddWithNameConflict()
+    {
         $this->expectException(LogicException::class);
-        $helpers->add('foo', function () {
-            return;
-        });
+        $this->helpers->add('name', 'strtoupper');
+        $this->helpers->add('name', 'strtoupper');
     }
 
-    public function testAddArgumentCountError()
+    public function testAddWithMissingName()
     {
-        $helpers = new ViewHelpers();
-
-        $this->expectException(ArgumentCountError::class);
-        $helpers->add('a');
-    }
-
-    public function testAddTypeError()
-    {
-        $helpers = new ViewHelpers();
-
         $this->expectException(TypeError::class);
-        $helpers->add('foo', 'bar');
+        $this->helpers->add(null, 'strtoupper');
+    }
+
+    public function testAddWithMissingCallable()
+    {
+        $this->expectException(ArgumentCountError::class);
+        $this->helpers->add('name');
+    }
+
+    public function testAddWithWrongTypeForCallable()
+    {
+        $this->expectException(TypeError::class);
+        $this->helpers->add('name', 412);
     }
 
     public function testGet()
     {
-        $helpers = new ViewHelpers();
-        $func = 'strtoupper';
-        $helpers->add('foo', $func);
+        $this->helpers->add('name', 'strtoupper');
+        $this->assertEquals('strtoupper', $this->helpers->get('name'));
+    }
 
-        $funcToTest = $helpers->get('foo');
-        $this->assertEquals($func, $funcToTest);
-
+    public function testGetWithNonExistingName()
+    {
         $this->expectException(LogicException::class);
-        $helpers->get('not-existing-key');
+        $this->helpers->get('name');
     }
 
     public function testRemove()
     {
-        $helpers = new ViewHelpers();
-        $func = 'strtoupper';
-        $helpers->add('foo', $func);
+        $this->helpers->add('name', 'strtoupper');
+        $this->assertInstanceOf(ViewHelpers::class, $this->helpers->remove('name'));
+    }
 
-        $return = $helpers->remove('foo');
-        $this->assertEquals($helpers, $return);
-
+    public function testRemoveWithNonExistingKey()
+    {
         $this->expectException(LogicException::class);
-        $helpers->remove('not-existing-key');
+        $this->helpers->remove('name');
     }
 
     public function testExists()
     {
-        $helpers = new ViewHelpers();
-        $helpers->add('foo', 'strtoupper');
+        $this->helpers->add('name', 'strtoupper');
+        $this->assertEquals(true, $this->helpers->exists('name'));
+    }
 
-        $boolToTest = $helpers->exists('foo');
-        $this->assertEquals(true, $boolToTest);
-
-        $boolToTest = $helpers->exists('not-existing-key');
-        $this->assertEquals(false, $boolToTest);
+    public function testExistsWithNonExistingName()
+    {
+        $this->assertEquals(false, $this->helpers->exists('name'));
     }
 }

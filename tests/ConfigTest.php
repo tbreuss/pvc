@@ -49,33 +49,38 @@ class ConfigTest extends TestCase
         $this->config = new Config($this->data);
     }
 
-    public function testNonExistingKey()
+    public function testGetWithNonExistingKey()
     {
-        $testVal = $this->config->get('non-existing-key');
-        $this->assertEquals($testVal, null);
-
-        $testVal = $this->config->get('non-existing-key', 'default');
-        $this->assertEquals($testVal, 'default');
+        $this->assertNull($this->config->get('non-existing-key'));
     }
 
-    public function testDotNotation()
+    public function testGetWithNonExistingKeyAndDefault()
+    {
+        $this->assertEquals('default', $this->config->get('non-existing-key', 'default'));
+    }
+
+    public function testGetWithDotNotation()
     {
         $testVal = $this->config->get('person.address');
-        $this->assertEquals($testVal, $this->data['person']['address']);
+        $this->assertEquals($this->data['person']['address'], $testVal);
 
         $testVal = $this->config->get('person.address.zip');
-        $this->assertEquals($testVal, $this->data['person']['address']['zip']);
+        $this->assertEquals($this->data['person']['address']['zip'], $testVal);
 
         $testVal = $this->config->get('person.hobbies.2');
-        $this->assertEquals($testVal, $this->data['person']['hobbies'][2]);
+        $this->assertEquals($this->data['person']['hobbies'][2], $testVal);
 
         $testVal = $this->config->get('person.very.very.long.entry.value');
-        $this->assertEquals($testVal, $this->data['person']['very']['very']['long']['entry']['value']);
+        $this->assertEquals($this->data['person']['very']['very']['long']['entry']['value'], $testVal);
+    }
 
-        $testVal = $this->config->get('person.address.notextisting');
-        $this->assertEquals($testVal, null);
+    public function testGetWithDotNotationAndNotExistingEndSegment()
+    {
+        $this->assertNull($this->config->get('person.address.notextisting'));
+    }
 
-        $testVal = $this->config->get('person.not-extisting.street');
-        $this->assertEquals($testVal, null);
+    public function testGetWithDotNotationAndNotExistingMiddleSegment()
+    {
+        $this->assertNull($this->config->get('person.not-extisting.street'));
     }
 }

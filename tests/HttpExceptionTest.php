@@ -17,12 +17,10 @@ class HttpExceptionTest extends TestCase
 
     public function testMethodNotAllowed()
     {
-        $path = 'foo';
-        $method = 'bar';
         $this->expectException(HttpException::class);
         $this->expectExceptionCode(405);
         $this->expectExceptionMessage('Cannot access resource `foo` using method `bar`');
-        throw HttpException::methodNotAllowed($path, $method, []);
+        throw HttpException::methodNotAllowed('foo', 'bar', []);
     }
 
     public function testBadRequest()
