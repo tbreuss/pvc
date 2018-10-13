@@ -74,11 +74,11 @@ class ViewHelpersTest extends TestCase
     public function testExists()
     {
         $this->helpers->add('name', 'strtoupper');
-        $this->assertEquals(true, $this->helpers->exists('name'));
+        $this->assertTrue($this->helpers->exists('name'));
     }
 
     public function testExistsWithNonExistingName()
     {
-        $this->assertEquals(false, $this->helpers->exists('name'));
+        $this->assertFalse($this->helpers->exists('name'));
     }
 }
