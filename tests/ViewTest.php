@@ -7,6 +7,7 @@ use LogicException;
 use PHPUnit\Framework\TestCase;
 use Tebe\Pvc\Exception\SystemException;
 use Tebe\Pvc\View\View;
+use Tebe\Pvc\View\ViewExtension;
 use Tebe\Pvc\View\ViewHelpers;
 use TypeError;
 
@@ -20,28 +21,24 @@ class ViewTest extends TestCase
     public function setUp()
     {
         $helpers = new ViewHelpers();
-        $helpers->add('upper', function ($str) {
-            return strtoupper($str);
-        });
-        $helpers->add('lower', function ($str) {
-            return strtolower($str);
-        });
+        $helpers->add('upper', 'strtoupper');
+        $helpers->add('lower', 'strtolower');
         $this->view = new View(__DIR__ . '/resources/views', $helpers);
     }
 
-    public function testConstructorException1()
+    public function testConstructorWithNonExistingViewsPath()
     {
         $this->expectException(SystemException::class);
         new View(__DIR__ . '/not-existing-path', new ViewHelpers());
     }
 
-    public function testConstructorException2()
+    public function testConstructorWithMissingParams()
     {
         $this->expectException(ArgumentCountError::class);
         new View();
     }
 
-    public function testConstructorException3()
+    public function testConstructorWithWrongTypeForHelpers()
     {
         $this->expectException(TypeError::class);
         new View(__DIR__ . '/resources/views', false);
@@ -49,78 +46,115 @@ class ViewTest extends TestCase
 
     public function testRender()
     {
-        // render without params
         $testValue = $this->view->render('index');
         $this->assertEquals('Output from view "index"', $testValue);
+    }
 
-        // render with params
+    public function testRenderWithParams()
+    {
         $testValue = $this->view->render('index/vars', [
             'int' => 123,
             'string' => 'ABC'
         ]);
         $this->assertEquals("Output from view \"index/vars\"<br>\n123<br>\nABC", $testValue);
+    }
 
-        // file not exist
+    public function testRenderWithNonExistingFile()
+    {
         $this->expectException(SystemException::class);
         $this->view->render('not-existing-view');
     }
 
     public function testFileExist()
     {
-        // existing view
-        $testValue = $this->view->fileExist('index/vars');
-        $this->assertEquals(true, $testValue);
-
-        // not existing view
-        $testValue = $this->view->fileExist('not-existing-view');
-        $this->assertEquals(false, $testValue);
+        $this->assertFalse($this->view->fileExist('not-existing-view'));
+        $this->assertTrue($this->view->fileExist('index/vars'));
     }
 
     public function testGetViewsPath()
     {
-        $testValue = $this->view->getViewsPath();
-        $this->assertEquals(__DIR__ . '/resources/views', $testValue);
+        $this->assertEquals(__DIR__ . '/resources/views', $this->view->getViewsPath());
     }
 
-    public function testCall()
+    public function testMagicCall()
     {
-        $upper = $this->view->upper('foo');
-        $this->assertEquals('FOO', $upper);
+        $this->assertEquals('FOO', $this->view->upper('foo'));
+        $this->assertEquals('BAR', $this->view->upper('BAR'));
+    }
 
-        $lower = $this->view->upper('BAR');
-        $this->assertEquals('BAR', $lower);
-
+    public function testMagicCallWithNonExistingHelper()
+    {
         $this->expectException(LogicException::class);
-        $this->view->notExisting();
+        $this->view->notExistingMethod();
     }
 
-    public function testData()
+    public function testRegisterHelper()
     {
-        // __set / __get
-        $boolVal = true;
-        $this->view->boolVal = $boolVal;
-        $this->assertEquals($boolVal, $this->view->boolVal);
+        $this->assertInstanceOf(View::class, $this->view->registerHelper('trim', 'trim'));
+    }
 
-        $arrayVal = ['a', 'b', 'c'];
-        $this->view->arrayVal = $arrayVal;
-        $this->assertEquals($arrayVal, $this->view->arrayVal);
+    public function testRemoveHelper()
+    {
+        $this->assertInstanceOf(View::class, $this->view->removeHelper('upper'));
+    }
 
-        $intVal = 123;
-        $this->view->intVal = $intVal;
-        $this->assertEquals($intVal, $this->view->intVal);
+    public function testGetHelper()
+    {
+        $this->assertEquals('strtoupper', $this->view->getHelper('upper'));
+    }
 
-        $stringVal = 'abc';
-        $this->view->stringVal = $stringVal;
-        $this->assertEquals($stringVal, $this->view->stringVal);
+    public function testDoesHelperExist()
+    {
+        $this->assertTrue($this->view->doesHelperExist('upper'));
+        $this->assertFalse($this->view->doesHelperExist('not-existing-helper'));
+    }
 
-        // __isset / __unset
-        $boolVal = isset($this->view->boolVal);
-        $this->assertEquals(true, $boolVal);
+    public function testRegisterExtension()
+    {
+        $param = $this->view;
+        $extension = new class implements ViewExtension
+        {
+            public function register($param)
+            {
+            }
+        };
+        $testVal = $this->view->registerExtension($extension);
+        $this->assertInstanceOf(View::class, $testVal);
+    }
+
+    public function testRegisterExtensionWithMissingExtension()
+    {
+        $this->expectException(ArgumentCountError::class);
+        $this->view->registerExtension();
+    }
+
+    public function testRegisterExtensionWithWrongType()
+    {
+        $this->expectException(TypeError::class);
+        $this->view->registerExtension(true);
+    }
+
+    public function testMagicSetGet()
+    {
+        $this->view->boolVal = true;
+        $this->assertEquals(true, $this->view->boolVal);
+
+        $this->view->arrayVal = ['a', 'b', 'c'];
+        $this->assertEquals(['a', 'b', 'c'], $this->view->arrayVal);
+
+        $this->view->intVal = 123;
+        $this->assertEquals(123, $this->view->intVal);
+
+        $this->view->stringVal = 'abc';
+        $this->assertEquals('abc', $this->view->stringVal);
+    }
+
+    public function testMagicIssetUnset()
+    {
+        $this->view->boolVal = 123;
+        $this->assertTrue(isset($this->view->boolVal));
+
         unset($this->view->boolVal);
-        $boolVal = isset($this->view->boolVal);
-        $this->assertEquals(false, $boolVal);
-
-        $nullVal = $this->view->boolVal;
-        $this->assertEquals(null, $nullVal);
+        $this->assertFalse(isset($this->view->boolVal));
     }
 }
