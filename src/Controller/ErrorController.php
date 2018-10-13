@@ -24,6 +24,14 @@ class ErrorController extends BaseController
     }
 
     /**
+     * @return Throwable
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    /**
      * @return string
      * @throws SystemException
      */
