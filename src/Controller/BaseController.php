@@ -132,6 +132,9 @@ abstract class BaseController
         return $this->actionName . 'Action';
     }
 
+    /**
+     * @return string
+     */
     public function getRoute(): string
     {
         return $this->controllerName . '/' . $this->actionName;
