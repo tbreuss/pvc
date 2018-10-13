@@ -23,7 +23,7 @@ class ViewTest extends TestCase
         $helpers = new ViewHelpers();
         $helpers->add('upper', 'strtoupper');
         $helpers->add('lower', 'strtolower');
-        $this->view = new View(__DIR__ . '/resources/views', $helpers);
+        $this->view = new View(__DIR__ . '/../resources/views', $helpers);
     }
 
     public function testConstructorWithNonExistingViewsPath()
@@ -73,7 +73,7 @@ class ViewTest extends TestCase
 
     public function testGetViewsPath()
     {
-        $this->assertEquals(__DIR__ . '/resources/views', $this->view->getViewsPath());
+        $this->assertEquals(__DIR__ . '/../resources/views', $this->view->getViewsPath());
     }
 
     public function testMagicCall()
