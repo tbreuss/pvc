@@ -12,6 +12,7 @@ use Tebe\Pvc\Controller\BaseController;
 use Tebe\Pvc\Controller\ErrorController;
 use Tebe\Pvc\Exception\HttpException;
 use Tebe\Pvc\Exception\SystemException;
+use Tebe\Pvc\Helper\RequestHelper;
 use Tebe\Pvc\View\View;
 
 class RequestHandler implements RequestHandlerInterface
@@ -55,7 +56,7 @@ class RequestHandler implements RequestHandlerInterface
         $this->request = $request;
         $response = (new HttpFactory())->createResponse();
         $response = $response->withHeader('Content-Type', 'text/html');
-        $pathInfo = $this->getPathInfo();
+        $pathInfo = RequestHelper::getPathInfo($request);
 
         try {
             $controller = $this->resolveController($pathInfo);
@@ -175,23 +176,6 @@ class RequestHandler implements RequestHandlerInterface
             return true;
         }
         return false;
-    }
-
-    /**
-     * @return string
-     */
-    private function getPathInfo(): string
-    {
-        $serverParams = $this->request->getServerParams();
-        $pathInfo = $serverParams['PATH_INFO'] ?? '';
-        $pathInfo = trim($pathInfo, '/');
-        if (empty($pathInfo)) {
-            $pathInfo = 'index/index';
-        }
-        if (strpos($pathInfo, '/') === false) {
-            $pathInfo .= '/index';
-        }
-        return $pathInfo;
     }
 
     /**
