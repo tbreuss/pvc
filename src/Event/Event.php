@@ -57,11 +57,27 @@ class Event
     }
 
     /**
+     * @return bool
+     */
+    public function hasContext()
+    {
+        return $this->context !== null;
+    }
+
+    /**
      * @return array|null
      */
     public function getInfo()
     {
         return $this->info;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasInfo()
+    {
+        return $this->info !== null;
     }
 
     /**

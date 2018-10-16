@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tebe\Pvc\Controller;
 
-use Tebe\Pvc\Application;
 use Tebe\Pvc\Exception\SystemException;
 use Throwable;
 
@@ -24,13 +23,20 @@ class ErrorController extends BaseController
     }
 
     /**
+     * @return Throwable
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    /**
      * @return string
      * @throws SystemException
      */
     public function errorAction()
     {
-        $request = Application::instance()->getRequest();
-        $acceptHeaders = $request->getHeaderLine('Accept');
+        $acceptHeaders = $this->getRequest()->getHeaderLine('Accept');
 
         // json output
         if (strpos($acceptHeaders, 'application/json') !== false) {
