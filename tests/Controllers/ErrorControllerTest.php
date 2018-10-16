@@ -21,7 +21,7 @@ class ErrorControllerTest extends TestCase
         $this->controller = new ErrorController(
             new View(__DIR__ . '/../resources/views', new ViewHelpers()),
             ServerRequestFactory::fromGlobals(),
-            'site/about'
+            'error/404'
         );
     }
 
@@ -36,5 +36,33 @@ class ErrorControllerTest extends TestCase
         $this->expectException(TypeError::class);
         $this->controller->setError(new class {
         });
+    }
+
+    public function testErrorActionWithExistingErrorViewFile()
+    {
+        $this->controller->setError(new SystemException('error', 404));
+        $this->assertEquals("<div>Header</div>\nError 404<div>Footer</div>", $this->controller->errorAction());
+    }
+
+    public function testErrorActionWithMissingErrorViewFile()
+    {
+        $this->controller->setError(new SystemException('error', 405));
+        $this->assertStringStartsWith('error<br>#0', $this->controller->errorAction());
+    }
+
+    public function testErrorActionWithJsonContentType()
+    {
+        $errorController = new ErrorController(
+            new View(__DIR__ . '/../resources/views', new ViewHelpers()),
+            ServerRequestFactory::fromGlobals(['HTTP_ACCEPT' => 'text/html,application/json;q=0.9']),
+            'error/404'
+        );
+        $errorController->setError(new SystemException('error', 404));
+        $response = $errorController->errorAction();
+        $this->assertArrayHasKey('code', $response);
+        $this->assertArrayHasKey('file', $response);
+        $this->assertArrayHasKey('line', $response);
+        $this->assertArrayHasKey('message', $response);
+        $this->assertArrayHasKey('trace', $response);
     }
 }
