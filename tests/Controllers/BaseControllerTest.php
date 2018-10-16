@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Tebe\Pvc\Controller\BaseController;
 use Tebe\Pvc\View\View;
 use Tebe\Pvc\View\ViewHelpers;
+use Zend\Diactoros\ServerRequestFactory;
 
 class BaseControllerTest extends TestCase
 {
@@ -14,8 +15,11 @@ class BaseControllerTest extends TestCase
 
     public function setUp()
     {
+        $view = new View(__DIR__ . '/../resources/views', new ViewHelpers());
+        $request = ServerRequestFactory::fromGlobals();
         $this->mock = $this->getMockForAbstractClass(BaseController::class, [
-            'view' => new View(__DIR__ . '/../resources/views', new ViewHelpers()),
+            $view,
+            $request,
             'controller/action'
         ]);
     }

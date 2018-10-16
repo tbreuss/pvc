@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tebe\Pvc\Controller;
 
+use Psr\Http\Message\ServerRequestInterface;
 use Tebe\Pvc\Exception\SystemException;
 use Tebe\Pvc\View\View;
 
@@ -13,6 +14,11 @@ abstract class BaseController
      * @var View
      */
     private $view;
+
+    /**
+     * @var ServerRequestInterface
+     */
+    private $request;
 
     /**
      * @var string
@@ -27,12 +33,15 @@ abstract class BaseController
     /**
      * Controller constructor.
      * @param View $view
+     * @param ServerRequestInterface $request
      * @param string $pathInfo
      */
-    public function __construct(View $view, string $pathInfo)
+    public function __construct(View $view, ServerRequestInterface $request, string $pathInfo)
     {
+        // TODO think of why not getting $pathInfo from $request?
         [$controllerName, $actionName] = explode('/', $pathInfo);
         $this->setView($view);
+        $this->setRequest($request);
         $this->setControllerName($controllerName);
         $this->setActionName($actionName);
     }
@@ -51,6 +60,22 @@ abstract class BaseController
     private function setView(View $view)
     {
         $this->view = $view;
+    }
+
+    /**
+     * @return ServerRequestInterface
+     */
+    public function getRequest(): ServerRequestInterface
+    {
+        return $this->request;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     */
+    private function setRequest(ServerRequestInterface $request)
+    {
+        $this->request = $request;
     }
 
     /**

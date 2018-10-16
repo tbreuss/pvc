@@ -9,6 +9,7 @@ use Tebe\Pvc\View\View;
 use Tebe\Pvc\View\ViewHelpers;
 use Throwable;
 use TypeError;
+use Zend\Diactoros\ServerRequestFactory;
 
 class ErrorControllerTest extends TestCase
 {
@@ -19,6 +20,7 @@ class ErrorControllerTest extends TestCase
     {
         $this->controller = new ErrorController(
             new View(__DIR__ . '/../resources/views', new ViewHelpers()),
+            ServerRequestFactory::fromGlobals(),
             'site/about'
         );
     }

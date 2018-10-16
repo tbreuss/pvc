@@ -63,7 +63,7 @@ class RequestHandler implements RequestHandlerInterface
             $mixed = $this->executeAction($controller);
         } catch (\Throwable $t) {
             // handle errors with built-in error controller
-            $controller = new ErrorController($this->view, 'error/error');
+            $controller = new ErrorController($this->view, $request, 'error/error');
             $controller->setError($t);
             $mixed = $this->executeAction($controller);
             $response = $response->withStatus($t->getCode());
@@ -99,7 +99,7 @@ class RequestHandler implements RequestHandlerInterface
         require_once($controllerPath);
 
         $controllerClass = ucfirst($controllerName) . 'Controller';
-        $controller = new $controllerClass($this->view, $pathInfo);
+        $controller = new $controllerClass($this->view, $this->request, $pathInfo);
         return $controller;
     }
 
