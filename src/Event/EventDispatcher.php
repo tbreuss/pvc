@@ -21,13 +21,15 @@ class EventDispatcher
     /**
      * @param string $eventName
      * @param EventHandler $handler
+     * @return EventDispatcher
      */
-    public function addHandler(string $eventName, EventHandler $handler): void
+    public function addHandler(string $eventName, EventHandler $handler): self
     {
         if (!isset($this->handlers[$eventName])) {
             $this->handlers[$eventName] = [];
         }
         $this->handlers[$eventName][] = $handler;
+        return $this;
     }
 
     /**
