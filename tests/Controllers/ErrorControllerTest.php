@@ -8,7 +8,6 @@ use Tebe\Pvc\Exception\SystemException;
 use Tebe\Pvc\View\View;
 use Tebe\Pvc\View\ViewHelpers;
 use Throwable;
-use TypeError;
 use Zend\Diactoros\ServerRequestFactory;
 
 class ErrorControllerTest extends TestCase
@@ -29,13 +28,6 @@ class ErrorControllerTest extends TestCase
     {
         $this->controller->setError(new SystemException('error'));
         $this->assertInstanceOf(Throwable::class, $this->controller->getError());
-    }
-
-    public function testSetErrorWithWrongType()
-    {
-        $this->expectException(TypeError::class);
-        $this->controller->setError(new class {
-        });
     }
 
     public function testErrorActionWithExistingErrorViewFile()

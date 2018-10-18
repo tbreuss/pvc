@@ -98,7 +98,10 @@ class RequestHandler implements RequestHandlerInterface
 
         require_once($controllerPath);
 
-        $controllerClass = ucfirst($controllerName) . 'Controller';
+        // this seems to work...
+        $declaredClasses = get_declared_classes();
+        $controllerClass = array_pop($declaredClasses);
+
         $controller = new $controllerClass($this->view, $this->request, $pathInfo);
         return $controller;
     }

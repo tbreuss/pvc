@@ -10,6 +10,7 @@ use TypeError;
 
 class ViewHelpersTest extends TestCase
 {
+    /** @var ViewHelpers */
     private $helpers;
 
     public function setUp()
@@ -27,24 +28,6 @@ class ViewHelpersTest extends TestCase
         $this->expectException(LogicException::class);
         $this->helpers->add('name', 'strtoupper');
         $this->helpers->add('name', 'strtoupper');
-    }
-
-    public function testAddWithMissingName()
-    {
-        $this->expectException(TypeError::class);
-        $this->helpers->add(null, 'strtoupper');
-    }
-
-    public function testAddWithMissingCallable()
-    {
-        $this->expectException(ArgumentCountError::class);
-        $this->helpers->add('name');
-    }
-
-    public function testAddWithWrongTypeForCallable()
-    {
-        $this->expectException(TypeError::class);
-        $this->helpers->add('name', 412);
     }
 
     public function testGet()
