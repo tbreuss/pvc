@@ -2,14 +2,12 @@
 
 namespace Tebe\Pvc\Tests;
 
-use ArgumentCountError;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use Tebe\Pvc\Exception\SystemException;
 use Tebe\Pvc\View\View;
 use Tebe\Pvc\View\ViewExtension;
 use Tebe\Pvc\View\ViewHelpers;
-use TypeError;
 
 class ViewTest extends TestCase
 {
@@ -30,18 +28,6 @@ class ViewTest extends TestCase
     {
         $this->expectException(SystemException::class);
         new View(__DIR__ . '/not-existing-path', new ViewHelpers());
-    }
-
-    public function testConstructorWithMissingParams()
-    {
-        $this->expectException(ArgumentCountError::class);
-        new View();
-    }
-
-    public function testConstructorWithWrongTypeForHelpers()
-    {
-        $this->expectException(TypeError::class);
-        new View(__DIR__ . '/resources/views', false);
     }
 
     public function testRender()
@@ -103,6 +89,12 @@ class ViewTest extends TestCase
         $this->assertEquals('strtoupper', $this->view->getHelper('upper'));
     }
 
+    public function testGetHelperWithNonExistingName()
+    {
+        $this->expectException(LogicException::class);
+        $this->view->getHelper('trim');
+    }
+
     public function testDoesHelperExist()
     {
         $this->assertTrue($this->view->doesHelperExist('upper'));
@@ -111,7 +103,6 @@ class ViewTest extends TestCase
 
     public function testRegisterExtension()
     {
-        $param = $this->view;
         $extension = new class implements ViewExtension
         {
             public function register($param)
@@ -120,18 +111,6 @@ class ViewTest extends TestCase
         };
         $testVal = $this->view->registerExtension($extension);
         $this->assertInstanceOf(View::class, $testVal);
-    }
-
-    public function testRegisterExtensionWithMissingExtension()
-    {
-        $this->expectException(ArgumentCountError::class);
-        $this->view->registerExtension();
-    }
-
-    public function testRegisterExtensionWithWrongType()
-    {
-        $this->expectException(TypeError::class);
-        $this->view->registerExtension(true);
     }
 
     public function testMagicSetGet()

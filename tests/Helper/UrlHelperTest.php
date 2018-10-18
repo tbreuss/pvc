@@ -5,7 +5,6 @@ namespace Tebe\Pvc\Tests;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Tebe\Pvc\Helper\UrlHelper;
-use TypeError;
 
 class UrlHelperTest extends TestCase
 {
@@ -16,14 +15,17 @@ class UrlHelperTest extends TestCase
         $_SERVER['SCRIPT_NAME'] = $this->scriptName;
     }
 
-    public function testTo()
+    public function testToWithString()
     {
-        $this->assertEquals('/', UrlHelper::to('/'));
         $this->assertEquals('http://example.com', UrlHelper::to('http://example.com'));
-        $this->assertEquals('https://example.com', UrlHelper::to('https://example.com'));
     }
 
-    public function testToWithWrongType()
+    public function testToWithArray()
+    {
+        $this->assertEquals($this->scriptName . '/index', UrlHelper::to(['index']));
+    }
+
+    public function testToWithInvalidArgument()
     {
         $this->expectException(InvalidArgumentException::class);
         UrlHelper::to(0.4521);
@@ -45,12 +47,6 @@ class UrlHelperTest extends TestCase
             $this->scriptName . '/index/contact?a=1&b=2#anchor',
             UrlHelper::toRoute(['index/contact', 'a' => 1, 'b' => 2, '#' => 'anchor'])
         );
-    }
-
-    public function testToRouteWithWrongType()
-    {
-        $this->expectException(TypeError::class);
-        UrlHelper::toRoute('index/index');
     }
 
     public function testToRouteWithEmptyArray()

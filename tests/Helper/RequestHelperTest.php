@@ -2,7 +2,6 @@
 
 namespace Tebe\Pvc\Tests;
 
-use ArgumentCountError;
 use PHPUnit\Framework\TestCase;
 use Tebe\Pvc\Helper\RequestHelper;
 use Zend\Diactoros\ServerRequestFactory;
@@ -25,11 +24,5 @@ class RequestHelperTest extends TestCase
     {
         $server = ServerRequestFactory::fromGlobals(['PATH_INFO' => 'site/contact']);
         $this->assertEquals('site/contact', RequestHelper::getPathInfo($server));
-    }
-
-    public function testGetPathInfoWithMissingParams()
-    {
-        $this->expectException(ArgumentCountError::class);
-        RequestHelper::getPathInfo();
     }
 }

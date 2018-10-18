@@ -2,7 +2,6 @@
 
 namespace Tebe\Pvc\Tests;
 
-use ArgumentCountError;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -10,7 +9,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Tebe\HttpFactory\HttpFactory;
 use Tebe\Pvc\Middleware\MiddlewarePipe;
-use TypeError;
 
 class MiddlewarePipeTest extends TestCase
 {
@@ -25,12 +23,6 @@ class MiddlewarePipeTest extends TestCase
     public function testCreate()
     {
         $this->assertInstanceOf(MiddlewarePipe::class, MiddlewarePipe::create([]));
-    }
-
-    public function testCreateWithWrongType()
-    {
-        $this->expectException(TypeError::class);
-        MiddlewarePipe::create('wrongType');
     }
 
     public function testAdd()
@@ -48,43 +40,11 @@ class MiddlewarePipeTest extends TestCase
         $this->assertInstanceOf(MiddlewarePipe::class, $pipe);
     }
 
-    public function testAddWithMissingType()
-    {
-        $this->expectException(TypeError::class);
-        $this->pipe->add();
-    }
-
-    public function testAddWithWrongType()
-    {
-        $this->expectException(TypeError::class);
-        $this->pipe->add('type');
-    }
-
     public function testProcess()
     {
         $request = (new HttpFactory)->createServerRequest('GET', 'uri');
         $requestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
         $responseInterface = $this->pipe->process($request, $requestHandler);
         $this->assertInstanceOf(ResponseInterface::class, $responseInterface);
-    }
-
-    public function testProcessWithMissingRequest()
-    {
-        $this->expectException(TypeError::class);
-        $requestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
-        $this->pipe->process(null, $requestHandler);
-    }
-
-    public function testProcessWithMissingHandler()
-    {
-        $this->expectException(TypeError::class);
-        $request = (new HttpFactory)->createServerRequest('GET', 'uri');
-        $this->pipe->process($request);
-    }
-
-    public function testProcessWithMissingParams()
-    {
-        $this->expectException(ArgumentCountError::class);
-        $this->pipe->process();
     }
 }
