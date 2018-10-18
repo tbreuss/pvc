@@ -30,11 +30,11 @@ Composer is your friend.
 Start your web browser and open <http://localhost:9999>
 
 
-### Basic Auth Middleware
+### Middlewares
 
 The example is using some middlewares.
 
-For the Basic Auth middleware the Login details are:
+For the BasicAuth middleware the Login details are:
 
     Username: user
     Password: pass 
@@ -42,32 +42,26 @@ For the Basic Auth middleware the Login details are:
 You're ready to go!
 
 
-## Scripts
+## Testing & Code quality
 
-#### Testing
+We've integrated several scripts to ensure code quality.
 
-Start PHPUnit useing the following composer script.
-
+    # Using PHPUnit
     $ composer phpunit
 
-#### Codesniffer
-
-Start PHP Codesniffer:
-
+    # Using PHP-Codesniffer
     $ composer phpcs
     
-Fix Codesniffer issues:
-
+    # Fixing Codesniffer issues
     $ composer phpcbf
     
-#### Both together
-
+    # Using both together
     $ composer test
-    
 
-## Continues Integration
 
-PVC is using Travis (<https://travis-ci.org/tbreuss/pvc>) for Continuous Integration.
+## Continuous Integration
+
+PVC is using [Travis](<https://travis-ci.org/tbreuss/pvc>) for it's Continuous Integration.
 
 
 ## License
