@@ -9,6 +9,17 @@
 A minimal **P**[HP] [M]**VC** framework using well-tried concepts in PHP.  
 
 
+## Features
+
+Beside controllers, an event dispatcher and a PHP two step view including view helpers and extensions PVC supports the following standards:
+
+- PSR-7 HTTP message implementation
+- PSR-15 HTTP server-side middlewares
+- PSR-17 HTTP factories implementation 
+
+Others are planned.
+
+
 ## Prerequisites
 
 - PHP 7.2
