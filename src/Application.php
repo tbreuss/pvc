@@ -59,7 +59,7 @@ class Application
     private function __construct()
     {
         $this->setEventDispatcher(new EventDispatcher());
-        $this->middlewares = [];
+        $this->setMiddlewares([]);
     }
 
     /**
@@ -75,7 +75,7 @@ class Application
 
     /**
      * @param array $config
-     * @return $this
+     * @return Application
      */
     public function setConfig(array $config)
     {
@@ -93,7 +93,7 @@ class Application
 
     /**
      * @param ServerRequestInterface $request
-     * @return $this
+     * @return Application
      */
     public function setRequest(ServerRequestInterface $request)
     {
@@ -159,7 +159,7 @@ class Application
 
     /**
      * @param MiddlewareInterface[] $middlewares
-     * @return $this
+     * @return Application
      */
     public function setMiddlewares(array $middlewares): Application
     {
