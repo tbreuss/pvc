@@ -111,10 +111,12 @@ class Application
 
     /**
      * @param View $view
+     * @return Application
      */
     public function setView(View $view)
     {
         $this->view = $view;
+        return $this;
     }
 
     /**
@@ -128,6 +130,7 @@ class Application
             $helpers = new ViewHelpers();
             $view = new View($viewsPath, $helpers);
 
+            // TODO move to own ViewExtension class
             $view->registerHelper('escape', function (string $string) {
                 return htmlspecialchars($string);
             });
@@ -168,10 +171,12 @@ class Application
 
     /**
      * @param EventDispatcher $eventDispatcher
+     * @return Application
      */
-    private function setEventDispatcher(EventDispatcher $eventDispatcher)
+    public function setEventDispatcher(EventDispatcher $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+        return $this;
     }
 
     /**
