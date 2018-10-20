@@ -35,6 +35,7 @@
     "phpcbf": "./vendor/bin/phpcbf",
     "phpcs": "./vendor/bin/phpcs",
     "phpmd": "./vendor/bin/phpmd ./src text codesize,design,naming,unusedcode",
-    "phpunit": "./vendor/bin/phpunit"
+    "phpunit": "./vendor/bin/phpunit",
+    "run": "php -S localhost:9999 -t ./example/public >/dev/null 2>&1"
   }
 }

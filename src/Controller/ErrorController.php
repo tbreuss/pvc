@@ -16,10 +16,12 @@ class ErrorController extends BaseController
 
     /**
      * @param Throwable $error
+     * @return ErrorController
      */
     public function setError(Throwable $error)
     {
         $this->error = $error;
+        return $this;
     }
 
     /**

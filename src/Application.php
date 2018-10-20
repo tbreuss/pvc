@@ -59,7 +59,7 @@ class Application
     private function __construct()
     {
         $this->setEventDispatcher(new EventDispatcher());
-        $this->middlewares = [];
+        $this->setMiddlewares([]);
     }
 
     /**
@@ -75,7 +75,7 @@ class Application
 
     /**
      * @param array $config
-     * @return $this
+     * @return Application
      */
     public function setConfig(array $config)
     {
@@ -93,7 +93,7 @@ class Application
 
     /**
      * @param ServerRequestInterface $request
-     * @return $this
+     * @return Application
      */
     public function setRequest(ServerRequestInterface $request)
     {
@@ -111,10 +111,12 @@ class Application
 
     /**
      * @param View $view
+     * @return Application
      */
     public function setView(View $view)
     {
         $this->view = $view;
+        return $this;
     }
 
     /**
@@ -128,6 +130,7 @@ class Application
             $helpers = new ViewHelpers();
             $view = new View($viewsPath, $helpers);
 
+            // TODO move to own ViewExtension class
             $view->registerHelper('escape', function (string $string) {
                 return htmlspecialchars($string);
             });
@@ -156,7 +159,7 @@ class Application
 
     /**
      * @param MiddlewareInterface[] $middlewares
-     * @return $this
+     * @return Application
      */
     public function setMiddlewares(array $middlewares): Application
     {
@@ -168,10 +171,12 @@ class Application
 
     /**
      * @param EventDispatcher $eventDispatcher
+     * @return Application
      */
-    private function setEventDispatcher(EventDispatcher $eventDispatcher)
+    public function setEventDispatcher(EventDispatcher $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+        return $this;
     }
 
     /**
