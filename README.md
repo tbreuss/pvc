@@ -1,6 +1,7 @@
 # PVC – A Minimal P[HP] [M]VC Framework
 
 [![Travis](https://img.shields.io/travis/tbreuss/pvc.svg)](https://travis-ci.org/tbreuss/pvc)
+[![Scrutinizer](https://img.shields.io/scrutinizer/g/tbreuss/pvc.svg)](https://scrutinizer-ci.com/g/tbreuss/pvc/)
 [![Packagist](https://img.shields.io/packagist/dt/tebe/pvc.svg)](https://packagist.org/packages/tebe/pvc)
 [![GitHub (pre-)release](https://img.shields.io/github/release/tbreuss/pvc/all.svg)](https://github.com/tbreuss/pvc/releases)
 [![License](https://img.shields.io/github/license/tbreuss/pvc.svg)](https://github.com/tbreuss/pvc/blob/master/LICENSE)
