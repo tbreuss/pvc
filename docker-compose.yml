@@ -1,0 +1,17 @@
+version: '2'
+services:
+  php:
+    build: ./docker/php
+    container_name: pvc-php
+    volumes:
+    - ./:/app
+    working_dir: /app
+  web:
+    build: ./docker/nginx
+    container_name: pvc-nginx
+    volumes:
+    - ./:/app
+    depends_on:
+    - php
+    ports:
+    - 9090:80
