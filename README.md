@@ -25,21 +25,48 @@ Others are planned.
 
 - PHP 7.2
 - Composer
+- [Docker]
 
 
 ## Installation
 
-Composer is your friend.
+### Composer
+
+It is recommended to install PVC with Composer.
 
     $ composer create-project tebe/pvc myproject
 
 
 ## Running
 
+You can run the included example website with PHP's built-in server or Docker.
+
+
+### PHP built-in server
+
+Run the following command in terminal to start localhost web server:
+ 
     $ cd myproject/example/public
     $ php -S localhost:9999
 
 Start your web browser and open <http://localhost:9999>
+
+Stop the server by entering CTRL+C.
+
+
+### Docker
+
+Start the example application stack using Docker Compose:
+
+    $ cd myproject
+    $ docker-compose up -d
+
+Start your web browser and open <http://localhost:9090>
+
+Stop the application stack:
+
+    $ cd myproject
+    $ docker-compose down
 
 
 ### Middlewares
@@ -56,7 +83,7 @@ You're ready to go!
 
 ## Testing & Code quality
 
-We've integrated several scripts to ensure code quality.
+We've integrated several Composer scripts to ensure code quality.
 
     # Using PHPUnit
     $ composer phpunit
@@ -73,7 +100,7 @@ We've integrated several scripts to ensure code quality.
 
 ## Continuous Integration
 
-PVC is using [Travis](<https://travis-ci.org/tbreuss/pvc>) for it's Continuous Integration.
+PVC is using [Travis](<https://travis-ci.org/tbreuss/pvc>) for Continuous Integration.
 
 
 ## License
