@@ -4,12 +4,12 @@ $loader = require __DIR__ . '/../../vendor/autoload.php';
 // adding namespace, usually done in composer.json
 $loader->setPsr4("example\\", __DIR__ . "/..");
 
-use example\library\HttpBasicAuthMiddleware;
-use example\library\HeaderMiddleware;
-use example\library\HtmlMiddleware;
-use example\library\ResponseTimeMiddleware;
-use example\library\AuthLoggingEventHandler;
-use example\library\MyViewExtension;
+use example\components\HttpBasicAuthMiddleware;
+use example\components\HeaderMiddleware;
+use example\components\HtmlMiddleware;
+use example\components\ResponseTimeMiddleware;
+use example\components\AuthLoggingEventHandler;
+use example\components\MyViewExtension;
 use Tebe\Pvc\Application;
 use Zend\Diactoros\ServerRequestFactory;
 
