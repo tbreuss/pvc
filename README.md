@@ -1,6 +1,6 @@
 # PVC
 
-Minimal **P**[HP] [M]**VC** framework using well-tried concepts in PHP.  
+Lean **P**[HP] [M]**VC** framework using well-tried concepts in PHP.  
 
 [![Travis](https://img.shields.io/travis/tbreuss/pvc.svg)](https://travis-ci.org/tbreuss/pvc)
 [![Scrutinizer](https://img.shields.io/scrutinizer/g/tbreuss/pvc.svg)](https://scrutinizer-ci.com/g/tbreuss/pvc/)
