@@ -14,7 +14,7 @@
     "ext-json": "*",
     "psr/http-message": "^1.0",
     "psr/http-server-middleware": "^1.0",
-    "tebe/http-factory": "^0.8"
+    "tebe/http-factory": "^1.0"
   },
   "require-dev": {
     "phpmd/phpmd": "^2.6",

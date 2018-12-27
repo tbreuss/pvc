@@ -1,6 +1,6 @@
 <?php
 
-namespace example\library;
+namespace example\components;
 
 use Tebe\Pvc\Application;
 use Tebe\Pvc\Event\Event;

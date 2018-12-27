@@ -13,6 +13,8 @@
     <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
 
     <!-- Paths to check -->
+    <file>example</file>
     <file>src</file>
     <file>tests</file>
+    <exclude-pattern>\.(css|js)</exclude-pattern>
 </ruleset>

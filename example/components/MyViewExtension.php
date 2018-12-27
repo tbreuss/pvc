@@ -1,6 +1,6 @@
 <?php
 
-namespace example\library;
+namespace example\components;
 
 use Tebe\Pvc\View\ViewExtension;
 use Tebe\Pvc\View\View;

@@ -83,13 +83,8 @@ class ApplicationTest extends TestCase
         $this->assertInstanceOf(Application::class, $this->app->addEventHandler('name', $eventHandler));
     }
 
-    // TODO implement test
-    public function testRun()
-    {
-    }
-
     public function testSetViewExtensions()
     {
-        $this->assertINstanceOf(Application::class, $this->app->setViewExtensions([]));
+        $this->assertInstanceOf(Application::class, $this->app->setViewExtensions([]));
     }
 }
