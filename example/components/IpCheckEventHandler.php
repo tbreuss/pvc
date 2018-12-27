@@ -4,7 +4,7 @@ namespace example\components;
 
 use Tebe\Pvc\Application;
 use Tebe\Pvc\Event\Event;
-use Tebe\Pvc\EventHandler;
+use Tebe\Pvc\Event\EventHandler;
 
 class IpCheckEventHandler implements EventHandler
 {

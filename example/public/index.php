@@ -14,7 +14,7 @@ use Tebe\Pvc\Application;
 use Zend\Diactoros\ServerRequestFactory;
 
 try {
-    $config = require '../config/main.php';
+    $config = require __DIR__ . '/../config/main.php';
     $request = ServerRequestFactory::fromGlobals();
 
     Application::instance()
